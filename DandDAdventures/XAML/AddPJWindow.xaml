@@ -1,0 +1,59 @@
+﻿<Window x:Class="DandDAdventures.XAML.AddPJWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DandDAdventures.XAML"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Ajouté PJ" Height="300" Width="300">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel.Resources>
+                <sys:String x:Key="Add">Ajouté</sys:String>
+            </StackPanel.Resources>
+            <Button Name="AddPJ" HorizontalAlignment="Right" Click="AddPJClick">
+                <TextBlock Text="{StaticResource Add}"/>
+            </Button>
+        </StackPanel>
+        <DockPanel>
+            <Grid DockPanel.Dock ="Top" VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.Resources>
+                    <sys:String x:Key="Name">Nom :</sys:String>
+                    <sys:String x:Key="Classe">Classe :</sys:String>
+                    <sys:String x:Key="Race">Race :</sys:String>
+                    <sys:String x:Key="HowToRace">Définir une Race. Pour ajouter une sous race faire "Race_Parente / "Race_Enfante"</sys:String>
+                </Grid.Resources>
+
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="{StaticResource Name}" VerticalAlignment="Top"/>
+                <TextBox   Grid.Column="1" Grid.Row="0" Name="NameEntry"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="{StaticResource Classe}"/>
+                <ComboBox  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" IsEditable="True" Name="ClassCB"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="{StaticResource Race}" ToolTip="{StaticResource HowToRace}"/>
+                <ComboBox  Grid.Column="1" Grid.Row="2" IsEditable="True" x:Name="RaceCB" ToolTip="{StaticResource HowToRace}" DropDownClosed="RaceCBDropDownClosed">
+                    <ComboBoxItem HorizontalAlignment="Stretch">
+                        <TreeView ItemsSource="{Binding Children}" x:Name="RaceTV" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{Binding ElementName=RaceCB, Path=ActualWidth}"/>
+                    </ComboBoxItem>
+                </ComboBox>
+            </Grid>
+
+            <DockPanel Margin="0, 15, 0, 0">
+                <DockPanel.Resources>
+                    <sys:String x:Key="Story">Story :</sys:String>
+                </DockPanel.Resources>
+                <TextBlock DockPanel.Dock ="Top" Text="{StaticResource Story}"/>
+                <TextBox x:Name="StoryEntry"/>
+            </DockPanel>
+        </DockPanel>
+    </DockPanel>
+</Window>

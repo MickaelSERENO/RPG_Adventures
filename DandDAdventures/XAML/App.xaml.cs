@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace DandDAdventures
+namespace DandDAdventures.XAML
 {
     /// <summary>
     /// Logique d'interaction pour App.xaml
