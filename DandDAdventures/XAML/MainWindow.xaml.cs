@@ -7,13 +7,15 @@ using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Data.SQLite;
+using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace DandDAdventures.XAML
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ICommitDatabase
+    public partial class MainWindow : Window, ICommitDatabase, ISelectedTree
     {
         protected WindowData     m_windowData;
         protected Grid           m_mainPanel;
@@ -29,9 +31,9 @@ namespace DandDAdventures.XAML
         protected PlaceView      m_placeView;
 
         //The TabItem Views
-        protected PJTabItemCtrl m_pjTabItem;
-        protected PJTabItemCtrl m_pnjTabItem;
-        protected PJTabItemCtrl m_placeTabItem;
+        protected PJTabItemCtrl    m_pjTabItem;
+        protected PJTabItemCtrl    m_pnjTabItem;
+        protected PlaceTabItemCtrl m_placeTabItem;
 
         //The AddListeners
         protected AddPJListener    m_addPJListener;
@@ -49,8 +51,8 @@ namespace DandDAdventures.XAML
             m_mainPanel.Visibility = Visibility.Hidden;
 
             //Get and initialize the values for the MainControl View
-            m_pjView      = new PJView();
-            m_placeView   = new PlaceView();
+            m_pjView      = new PJView(m_windowData);
+            m_placeView   = new PlaceView(m_windowData);
             m_mainControl = (ContentControl)this.FindName("MainControl");
 
             //Initialize the Listeners
@@ -63,9 +65,9 @@ namespace DandDAdventures.XAML
             m_pnjTabControl   = (ContentControl)this.FindName("PNJTabItem");
             m_placeTabControl = (ContentControl)this.FindName("PlaceTabItem");
 
-            m_pjTabItem       = new PJTabItemCtrl();
-            m_pnjTabItem      = new PJTabItemCtrl();
-            m_placeTabItem    = new PJTabItemCtrl();
+            m_pjTabItem       = new PJTabItemCtrl(m_windowData);
+            m_pnjTabItem      = new PJTabItemCtrl(m_windowData);
+            m_placeTabItem    = new PlaceTabItemCtrl(m_windowData);
 
             m_pjTabControl.Content    = m_pjTabItem;
             m_pnjTabControl.Content   = m_pnjTabItem;
@@ -74,6 +76,8 @@ namespace DandDAdventures.XAML
             m_pjTabItem.SetAddListener(m_addPJListener);
             m_pnjTabItem.SetAddListener(m_addPNJListener);
             m_placeTabItem.SetAddListener(m_addPlaceListener);
+
+            m_pjTabItem.SetSelectedTreeListener(this);
 
             //Launch the Window
             SetToPJMainView();
@@ -120,6 +124,17 @@ namespace DandDAdventures.XAML
 
                 //Change to the memory
                 m_windowData.SQLDatabase.ChangeSQLiteConnection(m_windowData.SQLDatabase.Backup(":memory:"));
+
+                //Load the content in the FrontEnd
+                m_pjTabItem.LoadContent(m_windowData);
+                m_pjView.LoadContent(m_windowData);
+
+                m_placeTabItem.LoadContent(m_windowData);
+                m_placeView.LoadContent(m_windowData);
+
+                m_windowData.SQLPath = openFile.FileName;
+                m_windowData.CanSave = true;
+                m_mainPanel.Visibility = Visibility.Visible;
             }
         }
 
@@ -158,32 +173,65 @@ namespace DandDAdventures.XAML
 
         }
 
+        //Interfaces implementations
+        //Implementation of ICommitDatabase
         public void AddPJ(Character[] charas, PJ[] pjs)
         {
-            TreeView tr = (TreeView)m_pjTabItem.FindName("MainTreeView");
-
-            foreach (var c in charas)
-                tr.Items.Add(c);
+            foreach(var chara in charas)
+                m_windowData.PJDatas.CharacterList.Add(chara);
         }
 
-        public void AddPlace()
+        public void AddPlace(Place p)
         {
-            throw new NotImplementedException();
+            m_windowData.PlaceDatas.PlaceList.Add(p);
         }
 
         public void AddPNJ()
         {
             throw new NotImplementedException();
         }
+
+        public void OnSelectPJ(Character[] chara)
+        {
+            if(chara.Length == 1)
+            {
+                m_pjView.SetSummary(chara[0].Story);
+                m_pjView.SetGroupEvent(chara[0].Name);
+
+                m_windowData.CurrentPJ = chara[0].Name;
+            }
+        }
+
+        public void AddDate(CreateDate cd, Character[] chara)
+        {
+            GroupEvent ge = m_windowData.SQLDatabase.AddDate(cd.Description, chara);
+            m_pjView.AddGroupEvent(ge);
+
+        }
+
+        private void PJTabItemSelected(object sender, RoutedEventArgs e)
+        {
+            SetToPJMainView();
+        }
+
+        private void PlaceTabItemSelected(object sender, RoutedEventArgs e)
+        {
+            SetToPlaceMainView();
+        }
     }
 
     public class WindowData : INotifyPropertyChanged
     {
-        public bool m_canSave = false;
+        public bool   m_canSave = false;
         public String m_sqlPath = null;
+        public String m_currentPJ = "";
 
         protected DBHandler m_dbHandler;
         protected ICommitDatabase m_commitDB;
+
+        //DataContexts
+        protected PJDataContext m_pjDatas;
+        protected PlaceDataContext m_placeDatas;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -191,9 +239,11 @@ namespace DandDAdventures.XAML
         {
             m_dbHandler = sqlDatas;
             m_commitDB = commitDB;
+            m_pjDatas = new PJDataContext(this);
+            m_placeDatas = new PlaceDataContext(this);
         }
 
-        protected void OnPropertyChanged(string name)
+        public void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -211,6 +261,17 @@ namespace DandDAdventures.XAML
             }
         }
 
+        public String CurrentPJ
+        {
+            get => m_currentPJ;
+            set
+            {
+                m_currentPJ = value;
+            }
+        }
+
+        public PJDataContext    PJDatas { get => m_pjDatas ;}
+        public PlaceDataContext PlaceDatas { get => m_placeDatas; }
         public String SQLPath { get => m_sqlPath; set => m_sqlPath = value; }
     }
 }

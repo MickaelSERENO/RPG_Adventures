@@ -22,8 +22,8 @@ namespace DandDAdventures.XAML.Listeners
             w.ShowDialog();
 
             //Commit the Dialog
-            if(w.CharacterAdded)
-                m_wd.CommitDB.AddPJ(w.NewCharacters.ToArray(), w.NewPJs.ToArray());
+            if(w.Datas.CharacterAdded)
+                m_wd.CommitDB.AddPJ(w.Datas.NewCharacters.ToArray(), w.Datas.NewPJs.ToArray());
         }
     }
 
@@ -52,6 +52,14 @@ namespace DandDAdventures.XAML.Listeners
 
         public void OnFire()
         {
+            //Show the window
+            var w = new AddPlaceWindow(m_wd);
+            w.ShowDialog();
+
+            AddPlaceDatas datas = w.DataContext as AddPlaceDatas;
+            //Commit the Dialog
+            if (datas.PlaceAdded)
+                m_wd.CommitDB.AddPlace(new Place{Name = datas.Name, Story = datas.PlaceStory});
         }
     }
 }

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace DandDAdventures.XAML.Listeners
 {
-    public interface ICommitDatabase
+    public interface ISelectedTree
     {
-        void AddPJ(Character[] charas, PJ[] pjs);
-        void AddPlace(Place p);
-        void AddPNJ();
+        void OnSelectPJ(Character[] chara);
+        void AddDate(CreateDate cd, Character[] characters);
     }
 }

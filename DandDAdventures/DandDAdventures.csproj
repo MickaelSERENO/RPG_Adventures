@@ -93,10 +93,20 @@
     <Compile Include="XAML\AddPJWindow.xaml.cs">
       <DependentUpon>AddPJWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="XAML\AddPlaceWindow.xaml.cs">
+      <DependentUpon>AddPlaceWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="XAML\Controls\PlaceTabItemCtrl.xaml.cs">
+      <DependentUpon>PlaceTabItemCtrl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="XAML\Controls\PlaceView.xaml.cs">
       <DependentUpon>PlaceView.xaml</DependentUpon>
     </Compile>
     <Page Include="XAML\AddPJWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="XAML\AddPlaceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -107,6 +117,18 @@
     <Page Include="XAML\Controls\PJTabItemCtrl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XAML\Controls\PlaceTabItemCtrl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="XAML\CreateDate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="XAML\EditPlace.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="XAML\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -123,9 +145,17 @@
     <Compile Include="XAML\Controls\PJTabItemCtrl.xaml.cs">
       <DependentUpon>PJTabItemCtrl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="XAML\CreateDate.xaml.cs">
+      <DependentUpon>CreateDate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="XAML\EditPlace.xaml.cs">
+      <DependentUpon>EditPlace.xaml</DependentUpon>
+    </Compile>
     <Compile Include="XAML\Listeners\AddListener.cs" />
     <Compile Include="XAML\Listeners\IActionListener.cs" />
     <Compile Include="XAML\Listeners\ICommitDatabase.cs" />
+    <Compile Include="XAML\Listeners\ISelectedTree.cs" />
+    <Compile Include="XAML\Listeners\RelayCommand.cs" />
     <Compile Include="XAML\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

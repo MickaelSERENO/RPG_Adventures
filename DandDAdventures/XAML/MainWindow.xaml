@@ -52,13 +52,13 @@
             </ContentControl>
             <GridSplitter Grid.Column="2" HorizontalAlignment="Stretch" />
             <TabControl Grid.Column="3">
-                <TabItem Header="{StaticResource PJ}">
+                <TabItem Header="{StaticResource PJ}" Selector.Selected="PJTabItemSelected">
                     <ContentControl Name="PJTabItem"/>
                 </TabItem>
                 <TabItem Header="{StaticResource PNJ}">
                     <ContentControl Name="PNJTabItem"/>
                 </TabItem>
-                <TabItem Header="{StaticResource Places}">
+                <TabItem Header="{StaticResource Places}" Selector.Selected="PlaceTabItemSelected">
                     <ContentControl Name="PlaceTabItem"/>
                 </TabItem>
             </TabControl>

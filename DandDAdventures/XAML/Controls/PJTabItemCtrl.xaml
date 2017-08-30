@@ -7,30 +7,43 @@
              xmlns:self="clr-namespace:DandDAdventures"
              xmlns:local="clr-namespace:DandDAdventures.XAML.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             x:Name="PjTabItem">
     <DockPanel>
         <DockPanel.Resources>
+            <sys:String x:Key="CreateDateStr">New Date</sys:String>
             <sys:String x:Key="Add">Ajouté</sys:String>
         </DockPanel.Resources>
-        <Button DockPanel.Dock="Bottom" Width="Auto" Height="Auto" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="AddClick">
+     
+        <Button DockPanel.Dock="Bottom" Width="Auto" Height="Auto" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="AddClick" Margin="0,0,-4,0">
             <TextBlock Text="{StaticResource Add}"/>
         </Button>
-        <TreeView Name="MainTreeView" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <TreeView.Resources>
+        <ListView MouseDown="MainListViewMouseDown" Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Name="MainListView" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SelectionMode="Extended" SelectionChanged="MainListViewSelectionChanged" ItemsSource="{Binding Path=PJDatas.CharacterList}">
+            <ListView.Resources>
                 <DataTemplate DataType="{x:Type self:Character}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="(" Foreground="Red"/>
-                        <TextBlock Text="{Binding Class}" Foreground="Red"/>
-                        <TextBlock Text=") " Foreground="Red"/>
-                        
-                        <TextBlock Text="{Binding Name}" />
-
                         <TextBlock Text="[" Foreground="Green"/>
                         <TextBlock Text="{Binding Race}" Foreground="Green" />
-                        <TextBlock Text="]" Foreground="Green"/>
+                        <TextBlock Text="] " Foreground="Green"/>
+                        <TextBlock Text="{Binding Name}" />
                     </StackPanel>
                 </DataTemplate>
-            </TreeView.Resources>
-        </TreeView>
+            </ListView.Resources>
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <EventSetter Event="PreviewMouseRightButtonDown"
+                                 Handler="OnListViewItemPreviewMouseRightButtonDown"
+                                 />
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ContextMenu >
+                <ContextMenu DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
+                    <MenuItem Header="{StaticResource CreateDateStr}" 
+                              Command="{Binding Tag.CreateDate}"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
     </DockPanel>
 </UserControl>

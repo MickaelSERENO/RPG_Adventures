@@ -4,27 +4,47 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DandDAdventures.XAML.Controls"
+             xmlns:db="clr-namespace:DandDAdventures"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <DockPanel>
-        <DockPanel.Resources>
+             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding PJDatas}">
+    <Grid>
+        <Grid.Resources>
             <sys:String x:Key="Summary">Résumé</sys:String>
             <sys:String x:Key="Diary">Journal</sys:String>
-        </DockPanel.Resources>
+        </Grid.Resources>
 
-        <TextBlock Text="{StaticResource Summary}" DockPanel.Dock="Top"/>
-        <TextBlock Name="SummaryVal"></TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
 
-        <Grid DockPanel.Dock="Top">
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="{StaticResource Summary}" DockPanel.Dock="Top"/>
+            <TextBlock Name="SummaryVal"></TextBlock>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <ListView Grid.Column="0"></ListView>
+            <ListView Grid.Column="0" ItemsSource="{Binding Path=EventList, UpdateSourceTrigger=PropertyChanged}" Name="ListEvents">
+                <ListView.Resources>
+                    <DataTemplate DataType="{x:Type local:PJGroupEvent}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="["/>
+                            <TextBlock Text="{Binding ID}"/>
+                            <TextBlock Text="] "/>
+                            <TextBlock Text="{Binding CharaList}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.Resources>
+            </ListView>
+            
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" ></GridSplitter>
-            <TextBlock Grid.Column="2"></TextBlock>
+            <TextBlock Grid.Column="2" Text="{Binding Path=SelectedItem.Description, ElementName=ListEvents}"></TextBlock>
         </Grid>
-    </DockPanel>
+    </Grid>
 </UserControl>

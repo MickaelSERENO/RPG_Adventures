@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:DandDAdventures.XAML"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Ajouté PJ" Height="300" Width="300">
+        Title="Ajouté PJ" Height="300" Width="300"
+        x:Name="Window">
     <DockPanel>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
             <StackPanel.Resources>
@@ -26,8 +27,10 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
+                    <RowDefinition Height="10*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
+                
                 <Grid.Resources>
                     <sys:String x:Key="Name">Nom :</sys:String>
                     <sys:String x:Key="Classe">Classe :</sys:String>
@@ -38,9 +41,54 @@
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="{StaticResource Name}" VerticalAlignment="Top"/>
                 <TextBox   Grid.Column="1" Grid.Row="0" Name="NameEntry"/>
                 <TextBlock Grid.Column="0" Grid.Row="1" Text="{StaticResource Classe}"/>
-                <ComboBox  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" IsEditable="True" Name="ClassCB"/>
-                <TextBlock Grid.Column="0" Grid.Row="2" Text="{StaticResource Race}" ToolTip="{StaticResource HowToRace}"/>
-                <ComboBox  Grid.Column="1" Grid.Row="2" IsEditable="True" x:Name="RaceCB" ToolTip="{StaticResource HowToRace}" DropDownClosed="RaceCBDropDownClosed">
+
+                <!--IsHitTestVisible=false for entering EditMode. EditMove necessary for adding new row-->
+                <DataGrid Name="CharaDataGrid" MinRowHeight="25" IsReadOnly="False" CanUserDeleteRows="True" CanUserAddRows="True" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Path=DataContext.ClassRows, ElementName=Window, UpdateSourceTrigger=PropertyChanged}" ColumnWidth="Auto" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Classe">
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <ComboBox Margin="5" x:Name="Class_ClassName" Width="100" LostFocus="ClassNameLostFocus" Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEditable="True"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+
+
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox IsHitTestVisible="False" Margin="5" x:Name="Class_ClassName" Width="100" LostFocus="ClassNameLostFocus" Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEditable="True"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Niveau">
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="5">
+                                        <TextBox x:Name="LevelTxt" Width="50" TextChanged="LevelTxtTextChanged" Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <Button x:Name="LevelUp"   Content="+" Width="15" Height="15" Click="LevelUpClick" FontSize="12" VerticalContentAlignment="Top" />
+                                            <Button x:Name="LevelDown" Content="-" Width="15" Height="15" Click="LevelDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel IsHitTestVisible="False" Orientation="Horizontal" Margin="5">
+                                        <TextBox x:Name="LevelTxt" Width="50" TextChanged="LevelTxtTextChanged" Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <Button x:Name="LevelUp"   Content="+" Width="15" Height="15" Click="LevelUpClick" FontSize="12" VerticalContentAlignment="Top" />
+                                            <Button x:Name="LevelDown" Content="-" Width="15" Height="15" Click="LevelDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="{StaticResource Race}" ToolTip="{StaticResource HowToRace}"/>
+                <ComboBox IsTextSearchEnabled="False" Grid.Column="1" Grid.Row="3" IsEditable="True" x:Name="RaceCB" ToolTip="{StaticResource HowToRace}" DropDownClosed="RaceCBDropDownClosed">
                     <ComboBoxItem HorizontalAlignment="Stretch">
                         <TreeView ItemsSource="{Binding Children}" x:Name="RaceTV" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{Binding ElementName=RaceCB, Path=ActualWidth}"/>
                     </ComboBoxItem>
