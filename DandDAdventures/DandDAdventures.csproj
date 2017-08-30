@@ -90,6 +90,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Utils.cs" />
     <Compile Include="XAML\AddPJWindow.xaml.cs">
       <DependentUpon>AddPJWindow.xaml</DependentUpon>
     </Compile>
@@ -145,7 +146,6 @@
     <Compile Include="XAML\Controls\PJTabItemCtrl.xaml.cs">
       <DependentUpon>PJTabItemCtrl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\Controls\Utils.cs" />
     <Compile Include="XAML\CreateDate.xaml.cs">
       <DependentUpon>CreateDate.xaml</DependentUpon>
     </Compile>

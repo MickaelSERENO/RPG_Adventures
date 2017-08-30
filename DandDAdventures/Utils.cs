@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 
-namespace DandDAdventures.XAML.Controls
+namespace DandDAdventures
 {
     class Utils
     {
