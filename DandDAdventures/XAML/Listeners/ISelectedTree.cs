@@ -10,5 +10,6 @@ namespace DandDAdventures.XAML.Listeners
     {
         void OnSelectPJ(Character[] chara);
         void AddDate(CreateDate cd, Character[] characters);
+        void OnSelectPlace(Place place);
     }
 }

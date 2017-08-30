@@ -145,6 +145,7 @@
     <Compile Include="XAML\Controls\PJTabItemCtrl.xaml.cs">
       <DependentUpon>PJTabItemCtrl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="XAML\Controls\Utils.cs" />
     <Compile Include="XAML\CreateDate.xaml.cs">
       <DependentUpon>CreateDate.xaml</DependentUpon>
     </Compile>
@@ -154,6 +155,7 @@
     <Compile Include="XAML\Listeners\AddListener.cs" />
     <Compile Include="XAML\Listeners\IActionListener.cs" />
     <Compile Include="XAML\Listeners\ICommitDatabase.cs" />
+    <Compile Include="XAML\Listeners\ILinkName.cs" />
     <Compile Include="XAML\Listeners\ISelectedTree.cs" />
     <Compile Include="XAML\Listeners\RelayCommand.cs" />
     <Compile Include="XAML\MainWindow.xaml.cs">

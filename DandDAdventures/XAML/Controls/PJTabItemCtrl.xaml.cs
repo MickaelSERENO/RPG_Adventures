@@ -23,7 +23,6 @@ namespace DandDAdventures.XAML.Controls
     {
         private WindowData      m_wd;
         private IActionListener m_addListener  = null;
-        private ISelectedTree   m_selectedTree = null;
         private ICommand        m_createDate   = null;
 
         private ListView m_listView = null;
@@ -38,11 +37,6 @@ namespace DandDAdventures.XAML.Controls
         public void SetAddListener(IActionListener l)
         {
             m_addListener = l;
-        }
-
-        public void SetSelectedTreeListener(ISelectedTree st)
-        {
-            m_selectedTree = st;
         }
 
         public void LoadContent(WindowData datas)
@@ -60,7 +54,7 @@ namespace DandDAdventures.XAML.Controls
         private void MainListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListView l = (ListView)sender;
-            m_selectedTree?.OnSelectPJ(l.SelectedItems.Cast<Character>().ToArray());
+            m_wd.SelectedTree?.OnSelectPJ(l.SelectedItems.Cast<Character>().ToArray());
         }
 
         //For right click avoidance
@@ -99,7 +93,7 @@ namespace DandDAdventures.XAML.Controls
             cd.ShowDialog();
 
             if (cd.IsAdded)
-                m_selectedTree.AddDate(cd, m_listView.SelectedItems.Cast<Character>().ToArray());
+                m_wd.SelectedTree.AddDate(cd, m_listView.SelectedItems.Cast<Character>().ToArray());
         }
     }
 }

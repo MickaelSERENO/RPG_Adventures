@@ -18,7 +18,9 @@
         <Button DockPanel.Dock="Bottom" Width="Auto" Height="Auto" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="AddClick" Margin="0,0,-4,0">
             <TextBlock Text="{StaticResource Add}"/>
         </Button>
-        <ListView MouseDown="MainListViewMouseDown" Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Name="MainListView" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SelectionMode="Extended" SelectionChanged="MainListViewSelectionChanged" ItemsSource="{Binding Path=PJDatas.CharacterList}">
+        <ListView MouseDown="MainListViewMouseDown" Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                  Name="MainListView" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SelectionMode="Extended" SelectionChanged="MainListViewSelectionChanged" 
+                  ItemsSource="{Binding Path=PJDatas.CharacterList}" SelectedItem="{Binding Path=PJDatas.CharacterSelected, Mode=TwoWay}">
             <ListView.Resources>
                 <DataTemplate DataType="{x:Type self:Character}">
                     <StackPanel Orientation="Horizontal">

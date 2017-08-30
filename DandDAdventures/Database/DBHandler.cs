@@ -405,6 +405,14 @@ namespace DandDAdventures
             return d;
         }
 
+        public IQueryable<String> GetPlaceListName()
+        {
+            var d = from a in m_dbContext.Place
+                    select a.Name;
+
+            return d;
+        }
+
         public IQueryable<Treasure> GetTreasures(String placeName)
         {
             var d = from a in m_dbContext.Treasures
@@ -430,6 +438,14 @@ namespace DandDAdventures
             var d = from a in m_dbContext.Character
                     orderby a.Name
                     select a;
+
+            return d;
+        }
+
+        public IQueryable<String> GetCharaListName()
+        {
+            var d = from a in m_dbContext.Character
+                    select a.Name;
 
             return d;
         }
@@ -486,6 +502,20 @@ namespace DandDAdventures
                     select gb.Name;
 
             return d;
+        }
+
+        //Simple Getters
+        public String[] GetListName()
+        {
+            //Get a List of all Names
+            String[] listPlaceName = GetPlaceListName().ToArray();
+            String[] listCharaName = GetCharaListName().ToArray();
+            String[] listName = new string[listCharaName.Length + listPlaceName.Length];
+
+            Array.Copy(listPlaceName, listName, listPlaceName.Length);
+            Array.Copy(listCharaName, 0, listName, listPlaceName.Length, listCharaName.Length);
+
+            return listName;
         }
     }
 }

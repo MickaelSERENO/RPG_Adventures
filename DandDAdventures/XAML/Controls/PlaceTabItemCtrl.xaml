@@ -19,7 +19,7 @@
         
         <ListView ItemsSource="{Binding PlaceDatas.PlaceList}" Name="MainListView" 
                   VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SelectionMode="Single"
-                  SelectedItem="{Binding PlaceDatas.PlaceSelected, Mode=OneWayToSource}">
+                  SelectedItem="{Binding PlaceDatas.PlaceSelected, Mode=TwoWay}" SelectionChanged="MainListViewSelectionChanged">
             <ListView.Resources>
                 <Style TargetType="{x:Type ListViewItem}">
                     <EventSetter Event="MouseDoubleClick" Handler="ListViewItemMouseDoubleClick"/>

@@ -8,7 +8,6 @@
         mc:Ignorable="d"
         Title="DandD Adventures" Height="350" Width="525" Name="MyWindow">
     <DockPanel>
-        
         <!-- The Main Menu -->
         <Menu DockPanel.Dock="Top">
             <Menu.Resources>
@@ -51,14 +50,14 @@
 
             </ContentControl>
             <GridSplitter Grid.Column="2" HorizontalAlignment="Stretch" />
-            <TabControl Grid.Column="3">
-                <TabItem Header="{StaticResource PJ}" Selector.Selected="PJTabItemSelected">
+            <TabControl Grid.Column="3" x:Name="TabCtrl">
+                <TabItem TabIndex="0" Header="{StaticResource PJ}" Selector.Selected="PJTabItemSelected">
                     <ContentControl Name="PJTabItem"/>
                 </TabItem>
-                <TabItem Header="{StaticResource PNJ}">
+                <TabItem TabIndex="1" Header="{StaticResource PNJ}">
                     <ContentControl Name="PNJTabItem"/>
                 </TabItem>
-                <TabItem Header="{StaticResource Places}" Selector.Selected="PlaceTabItemSelected">
+                <TabItem TabIndex="2" Header="{StaticResource Places}" Selector.Selected="PlaceTabItemSelected">
                     <ContentControl Name="PlaceTabItem"/>
                 </TabItem>
             </TabControl>

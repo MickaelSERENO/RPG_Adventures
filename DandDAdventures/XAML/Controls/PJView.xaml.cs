@@ -22,8 +22,8 @@ namespace DandDAdventures.XAML.Controls
     /// </summary>
     public partial class PJView : UserControl
     {
-        private TextBlock         m_summaryVal;
-        private WindowData        m_wd;
+        private TextBlock m_summaryVal;
+        private WindowData m_wd;
 
         public PJView(WindowData wd)
         {
@@ -47,13 +47,20 @@ namespace DandDAdventures.XAML.Controls
         {
             var list = m_wd.SQLDatabase.GetGroupEvents(Name);
 
-            foreach(var ge in list)
+            foreach (var ge in list)
                 m_wd.PJDatas.AddGroupEvent(ge);
         }
 
         public void SetSummary(String s)
         {
-            m_summaryVal.Text = s;
+            String[] listName = m_wd.SQLDatabase.GetListName();
+            Utils.SetTextLink(m_summaryVal, s, listName, (Style)FindResource("LinkStyle"), this.PlaceDown);
+        }
+
+        private void PlaceDown(object sender, MouseButtonEventArgs e)
+        {
+            Run r = sender as Run;
+            m_wd.LinkName?.LinkToName(r.Text);
         }
     }
 
@@ -69,6 +76,7 @@ namespace DandDAdventures.XAML.Controls
         public event PropertyChangedEventHandler PropertyChanged;
         public ObservableCollection<PJGroupEvent> m_groupEvent;
         public ObservableCollection<Character> m_listCharacters;
+        protected Character m_characterSelected = null;
 
         private WindowData m_wd;
 
@@ -92,5 +100,18 @@ namespace DandDAdventures.XAML.Controls
 
         public ObservableCollection<PJGroupEvent> EventList  { get => m_groupEvent; set { m_groupEvent = value; } }
         public ObservableCollection<Character> CharacterList { get => m_listCharacters; set { m_listCharacters = value; } }
+
+        public Character CharacterSelected
+        {
+            get
+            {
+                return m_characterSelected;
+            }
+            set
+            {
+                m_characterSelected = value;
+                OnPropertyChanged("CharacterSelected");
+            }
+        }
     }
 }

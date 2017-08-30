@@ -55,5 +55,10 @@ namespace DandDAdventures.XAML.Controls
             m_wd.PlaceDatas.PlaceSelected = null;
             m_wd.PlaceDatas.PlaceSelected = place;
         }
+
+        private void MainListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            m_wd.SelectedTree.OnSelectPlace(m_wd.PlaceDatas.PlaceSelected);
+        }
     }
 }

@@ -8,10 +8,18 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding PJDatas}">
+    <UserControl.Resources>
+        <Style TargetType="Run" x:Key="LinkStyle">
+            <Setter Property="Foreground" Value="Blue"/>
+            <Setter Property="TextDecorations" Value="Underline"/>
+        </Style>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.Resources>
             <sys:String x:Key="Summary">Résumé</sys:String>
             <sys:String x:Key="Diary">Journal</sys:String>
+
         </Grid.Resources>
 
         <Grid.RowDefinitions>

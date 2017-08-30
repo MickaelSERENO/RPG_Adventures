@@ -9,13 +9,14 @@ using System.IO;
 using System.Data.SQLite;
 using System.Collections.Generic;
 using System.Windows.Input;
+using System.Linq;
 
 namespace DandDAdventures.XAML
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ICommitDatabase, ISelectedTree
+    public partial class MainWindow : Window, ICommitDatabase, ISelectedTree, ILinkName
     {
         protected WindowData     m_windowData;
         protected Grid           m_mainPanel;
@@ -43,7 +44,7 @@ namespace DandDAdventures.XAML
         public MainWindow()
         {
             InitializeComponent();
-            m_windowData = new WindowData(null, this);
+            m_windowData = new WindowData(null, this, this, this);
             this.DataContext = m_windowData;
 
             //Initialize the MainPanel
@@ -77,8 +78,6 @@ namespace DandDAdventures.XAML
             m_pnjTabItem.SetAddListener(m_addPNJListener);
             m_placeTabItem.SetAddListener(m_addPlaceListener);
 
-            m_pjTabItem.SetSelectedTreeListener(this);
-
             //Launch the Window
             SetToPJMainView();
         }
@@ -87,11 +86,15 @@ namespace DandDAdventures.XAML
         private void SetToPJMainView()
         {
             m_mainControl.Content = m_pjView;
+            TabControl tabCtrl = FindName("TabCtrl") as TabControl;
+            tabCtrl.SelectedIndex = ((TabItem)(m_pjTabControl.Parent)).TabIndex;
         }
 
         private void SetToPlaceMainView()
         {
             m_mainControl.Content = m_placeView;
+            TabControl tabCtrl = FindName("TabCtrl") as TabControl;
+            tabCtrl.SelectedIndex = ((TabItem)(m_placeTabControl.Parent)).TabIndex;
         }
 
         //Simple menu commands
@@ -202,6 +205,11 @@ namespace DandDAdventures.XAML
             }
         }
 
+        public void OnSelectPlace(Place place)
+        {
+            m_placeView.SetPlaceStory(place.Story);
+        }
+
         public void AddDate(CreateDate cd, Character[] chara)
         {
             GroupEvent ge = m_windowData.SQLDatabase.AddDate(cd.Description, chara);
@@ -218,6 +226,38 @@ namespace DandDAdventures.XAML
         {
             SetToPlaceMainView();
         }
+
+        public void LinkToName(String name)
+        {
+            String[] placeName = m_windowData.SQLDatabase.GetPlaceListName().ToArray();
+            String[] charaName = m_windowData.SQLDatabase.GetCharaListName().ToArray();
+
+            if (placeName.Contains(name))
+            {
+                foreach (Place p in m_windowData.PlaceDatas.PlaceList)
+                {
+                    if (p.Name == name)
+                    {
+                        m_windowData.PlaceDatas.PlaceSelected = p;
+                        break;
+                    }
+                }
+                SetToPlaceMainView();
+            }
+
+            else
+            {
+                foreach(Character c in m_windowData.PJDatas.CharacterList)
+                {
+                    if(c.Name == name)
+                    {
+                        m_windowData.PJDatas.CharacterSelected = c;
+                        break;
+                    }
+                }
+                SetToPJMainView();
+            }
+        }
     }
 
     public class WindowData : INotifyPropertyChanged
@@ -228,6 +268,8 @@ namespace DandDAdventures.XAML
 
         protected DBHandler m_dbHandler;
         protected ICommitDatabase m_commitDB;
+        protected ILinkName m_linkName;
+        protected ISelectedTree m_selectedTree;
 
         //DataContexts
         protected PJDataContext m_pjDatas;
@@ -235,10 +277,13 @@ namespace DandDAdventures.XAML
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public WindowData(DBHandler sqlDatas, ICommitDatabase commitDB)
+        public WindowData(DBHandler sqlDatas, ICommitDatabase commitDB, ILinkName linkName, ISelectedTree selectedTree)
         {
             m_dbHandler = sqlDatas;
             m_commitDB = commitDB;
+            m_linkName = linkName;
+            m_selectedTree = selectedTree;
+
             m_pjDatas = new PJDataContext(this);
             m_placeDatas = new PlaceDataContext(this);
         }
@@ -250,6 +295,8 @@ namespace DandDAdventures.XAML
 
         public DBHandler SQLDatabase { get => m_dbHandler; set => m_dbHandler = value; }
         public ICommitDatabase CommitDB { get => m_commitDB; }
+        public ILinkName LinkName { get => m_linkName; }
+        public ISelectedTree SelectedTree { get => m_selectedTree; }
 
         public bool CanSave
         {

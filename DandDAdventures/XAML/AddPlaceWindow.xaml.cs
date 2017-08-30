@@ -34,6 +34,7 @@ namespace DandDAdventures.XAML
             AddPlaceDatas datas = DataContext as AddPlaceDatas;
 
             m_wd.SQLDatabase.AddPlace(new Place { Name = datas.Name, Story = datas.PlaceStory });
+            datas.PlaceAdded = true;
             Close();
         }
     }
