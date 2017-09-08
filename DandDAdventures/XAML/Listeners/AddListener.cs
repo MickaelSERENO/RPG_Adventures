@@ -23,21 +23,7 @@ namespace DandDAdventures.XAML.Listeners
 
             //Commit the Dialog
             if(w.Datas.CharacterAdded)
-                m_wd.CommitDB.AddPJ(w.Datas.NewCharacters.ToArray(), w.Datas.NewPJs.ToArray());
-        }
-    }
-
-    public class AddPNJListener : IActionListener
-    {
-        protected WindowData m_wd;
-
-        public AddPNJListener(WindowData wd) : base()
-        {
-            m_wd = wd;
-        }
-
-        public void OnFire()
-        {
+                m_wd.CommitDB.AddPJ(w.Datas.NewCharacters.ToArray());
         }
     }
 

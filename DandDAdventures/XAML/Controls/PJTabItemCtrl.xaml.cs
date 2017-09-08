@@ -73,6 +73,16 @@ namespace DandDAdventures.XAML.Controls
             }
         }
 
+        private void ListViewItemMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            Character chara = ((ListViewItem)sender).Content as Character;
+            EditPJ ep = new EditPJ(m_wd, chara);
+            ep.ShowDialog();
+            m_wd.PJDatas.CharacterSelected = null;
+            m_wd.PJDatas.CharacterSelected = chara;
+        }
+
         //Menu handlers
         public ICommand CreateDate
         {
@@ -95,5 +105,7 @@ namespace DandDAdventures.XAML.Controls
             if (cd.IsAdded)
                 m_wd.SelectedTree.AddDate(cd, m_listView.SelectedItems.Cast<Character>().ToArray());
         }
+
+
     }
 }

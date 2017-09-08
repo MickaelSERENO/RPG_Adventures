@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DandDAdventures.XAML"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="EditPlace" Height="300" Width="300">
+        Title="EditPlace" Height="500" Width="500">
     <DockPanel>
         <DockPanel.Resources>
             <sys:String x:Key="OK">OK</sys:String>
@@ -35,9 +35,11 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="10*"/>
             </Grid.RowDefinitions>
-            
-            <TextBlock Grid.Row="0" Text="{StaticResource Story}"/>
-            <TextBox   Grid.Row="1" Text="{Binding Path=Place.Story, Mode=OneWay}" Name="StoryText"/>
+
+            <TextBlock Text="{StaticResource Story}"/>
+            <ScrollViewer Grid.Row="1" VerticalAlignment="Stretch" Height="Auto">
+                <TextBox Text="{Binding Path=Place.Story, Mode=OneWay}" Name="StoryText"  TextWrapping="Wrap" AcceptsReturn="True"/>
+            </ScrollViewer>
             <TextBlock Grid.Row="2" Text="{StaticResource Treasures}"/>
             <Grid      Grid.Row="3">
                 <Grid.ColumnDefinitions>

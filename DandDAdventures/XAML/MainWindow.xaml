@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DandDAdventures"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="DandD Adventures" Height="350" Width="525" Name="MyWindow">
+        Title="DandD Adventures" Height="600" Width="800" Name="MyWindow">
     <DockPanel>
         <!-- The Main Menu -->
         <Menu DockPanel.Dock="Top">
@@ -18,7 +18,6 @@
 
                 <sys:String x:Key="Edit">Edit</sys:String>
                 <sys:String x:Key="SetPJ">Set PJ...</sys:String>
-                <sys:String x:Key="SetPNJ">Set PNJ...</sys:String>
                 <sys:String x:Key="SetPlace">Set Place...</sys:String>
             </Menu.Resources>
             <MenuItem Header="{StaticResource File}">
@@ -27,7 +26,6 @@
                 <MenuItem Header="{StaticResource Save}" Click="SaveFile" IsEnabled="{Binding CanSave}"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Edit}">
-                <MenuItem Header="{StaticResource SetPNJ}" Click="SetPNJ"/>
                 <MenuItem Header="{StaticResource SetPJ}" Click="SetPJ"/>
                 <MenuItem Header="{StaticResource SetPlace}" Click="SetPlace"/>
             </MenuItem>
@@ -54,10 +52,7 @@
                 <TabItem TabIndex="0" Header="{StaticResource PJ}" Selector.Selected="PJTabItemSelected">
                     <ContentControl Name="PJTabItem"/>
                 </TabItem>
-                <TabItem TabIndex="1" Header="{StaticResource PNJ}">
-                    <ContentControl Name="PNJTabItem"/>
-                </TabItem>
-                <TabItem TabIndex="2" Header="{StaticResource Places}" Selector.Selected="PlaceTabItemSelected">
+                <TabItem TabIndex="1" Header="{StaticResource Places}" Selector.Selected="PlaceTabItemSelected">
                     <ContentControl Name="PlaceTabItem"/>
                 </TabItem>
             </TabControl>

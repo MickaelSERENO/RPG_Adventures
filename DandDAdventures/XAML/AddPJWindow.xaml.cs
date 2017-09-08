@@ -125,9 +125,9 @@ namespace DandDAdventures.XAML
 
             if (newRace && raceSplitted.Length > 1)
                 m_wd.SQLDatabase.AddRace(raceSplitted[0], raceSplitted[1]);
-   
+
             //Add the Character
-            m_pjWindowData.AddPJ(new Character { Name = m_nameEntry.Text, Race = m_raceCB.Text.Split(new Char[] { '/' }).Last(), Story = StoryEntry.Text }, new PJ { Name = m_nameEntry.Text, Level = 0 });
+            m_pjWindowData.AddPJ(new Character { Name = m_nameEntry.Text, Race = m_raceCB.Text.Split(new Char[] { '/' }).Last(), Story = StoryEntry.Text });
 
             //Then Add the Character Classes
             m_pjWindowData.AddCharaRowsToDb(m_nameEntry.Text);
@@ -187,14 +187,12 @@ namespace DandDAdventures.XAML
         protected List<ClassRow>  m_classRow;
         protected List<String>    m_classList;
         protected List<Character> m_characters;
-        protected List<PJ>        m_pjs;
         protected bool            m_characterAdded;
 
         public PJDataWindow(WindowData wd)
         {
             m_wd = wd;
             m_characters = new List<Character>();
-            m_pjs        = new List<PJ>();
             m_classRow   = new List<ClassRow>();
             m_classList  = new List<String>();
 
@@ -206,12 +204,10 @@ namespace DandDAdventures.XAML
             OnPropertyChanged("DataContext.ClassRows");
         }
 
-        public void AddPJ(Character chara, PJ pj)
+        public void AddPJ(Character chara)
         {
-            m_wd.SQLDatabase?.AddPJ(chara, pj);
-            m_wd.SQLDatabase.Commit();
+            m_wd.SQLDatabase?.AddPJ(chara);
             m_characters.Add(chara);
-            m_pjs.Add(pj);
             m_characterAdded = true;
         }
 
@@ -250,7 +246,6 @@ namespace DandDAdventures.XAML
 
         public Boolean         CharacterAdded { get => m_characterAdded; }
         public List<Character> NewCharacters { get => m_characters; }
-        public List<PJ>        NewPJs { get => m_pjs; }
         public List<ClassRow>  ClassRows
         {
             get

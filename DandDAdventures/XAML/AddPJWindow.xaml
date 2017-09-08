@@ -100,7 +100,7 @@
                     <sys:String x:Key="Story">Story :</sys:String>
                 </DockPanel.Resources>
                 <TextBlock DockPanel.Dock ="Top" Text="{StaticResource Story}"/>
-                <TextBox x:Name="StoryEntry"/>
+                <TextBox x:Name="StoryEntry" TextWrapping="Wrap" AcceptsReturn="True"/>
             </DockPanel>
         </DockPanel>
     </DockPanel>

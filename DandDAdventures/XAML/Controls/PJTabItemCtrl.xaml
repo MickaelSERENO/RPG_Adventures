@@ -37,6 +37,7 @@
                     <EventSetter Event="PreviewMouseRightButtonDown"
                                  Handler="OnListViewItemPreviewMouseRightButtonDown"
                                  />
+                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItemMouseDoubleClick"/>
                 </Style>
             </ListView.ItemContainerStyle>
 

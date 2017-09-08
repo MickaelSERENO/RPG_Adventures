@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace DandDAdventures.XAML.Listeners
 {
-    public interface ICommitDatabase
+    public interface ILinkName
     {
-        void AddPJ(Character[] charas);
-        void AddPlace(Place p);
+        void LinkToName(String s);
     }
 }

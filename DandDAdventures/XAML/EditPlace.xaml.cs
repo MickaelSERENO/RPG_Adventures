@@ -53,8 +53,13 @@ namespace DandDAdventures.XAML
 
         private void TreasureListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Nothing actually
+            //Nothing
         }
+    }
+
+    public class StringWrapped
+    {
+        public String Value { get; set; }
     }
 
     public class TreasureItem
@@ -62,10 +67,12 @@ namespace DandDAdventures.XAML
         public Treasure Treasure   { get; set; }
         public int      TreasureID { get; set; }
         public ObservableCollection<TreasureValue> TreasureValue { get; set; } 
+        public ObservableCollection<StringWrapped> TreasureOwner { get; set; }
 
         public TreasureItem()
         {
             TreasureValue = new ObservableCollection<TreasureValue>();
+            TreasureOwner = new ObservableCollection<StringWrapped>();
         }
     }
 

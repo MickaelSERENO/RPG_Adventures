@@ -33,12 +33,10 @@ namespace DandDAdventures.XAML
 
         //The TabItem Views
         protected PJTabItemCtrl    m_pjTabItem;
-        protected PJTabItemCtrl    m_pnjTabItem;
         protected PlaceTabItemCtrl m_placeTabItem;
 
         //The AddListeners
         protected AddPJListener    m_addPJListener;
-        protected AddPNJListener   m_addPNJListener;
         protected AddPlaceListener m_addPlaceListener;
 
         public MainWindow()
@@ -58,7 +56,6 @@ namespace DandDAdventures.XAML
 
             //Initialize the Listeners
             m_addPJListener    = new AddPJListener(m_windowData);
-            m_addPNJListener   = new AddPNJListener(m_windowData);
             m_addPlaceListener = new AddPlaceListener(m_windowData);
 
             //Get and initialize the TabControl 
@@ -67,15 +64,12 @@ namespace DandDAdventures.XAML
             m_placeTabControl = (ContentControl)this.FindName("PlaceTabItem");
 
             m_pjTabItem       = new PJTabItemCtrl(m_windowData);
-            m_pnjTabItem      = new PJTabItemCtrl(m_windowData);
             m_placeTabItem    = new PlaceTabItemCtrl(m_windowData);
 
             m_pjTabControl.Content    = m_pjTabItem;
-            m_pnjTabControl.Content   = m_pnjTabItem;
             m_placeTabControl.Content = m_placeTabItem;
 
             m_pjTabItem.SetAddListener(m_addPJListener);
-            m_pnjTabItem.SetAddListener(m_addPNJListener);
             m_placeTabItem.SetAddListener(m_addPlaceListener);
 
             //Launch the Window
@@ -166,11 +160,6 @@ namespace DandDAdventures.XAML
             
         }
 
-        private void SetPNJ(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void SetPlace(object sender, RoutedEventArgs e)
         {
 
@@ -178,7 +167,7 @@ namespace DandDAdventures.XAML
 
         //Interfaces implementations
         //Implementation of ICommitDatabase
-        public void AddPJ(Character[] charas, PJ[] pjs)
+        public void AddPJ(Character[] charas)
         {
             foreach(var chara in charas)
                 m_windowData.PJDatas.CharacterList.Add(chara);
@@ -188,12 +177,7 @@ namespace DandDAdventures.XAML
         {
             m_windowData.PlaceDatas.PlaceList.Add(p);
         }
-
-        public void AddPNJ()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public void OnSelectPJ(Character[] chara)
         {
             if(chara.Length == 1)
@@ -207,7 +191,37 @@ namespace DandDAdventures.XAML
 
         public void OnSelectPlace(Place place)
         {
-            m_placeView.SetPlaceStory(place.Story);
+            if(place == null)
+            {
+                m_placeView.SetPlaceStory("");
+                m_windowData.PlaceDatas.TreasureList.Clear();
+            }
+
+            else
+            {
+                //Set the Story
+                m_placeView.SetPlaceStory(place.Story);
+
+                //Fill the model about Treasures
+                m_windowData.PlaceDatas.TreasureList.Clear();
+
+                var treasures = m_windowData.SQLDatabase.GetTreasures(place.Name);
+                int i = 0;
+
+                foreach (var tr in treasures)
+                {
+                    TreasureItem trItem = new TreasureItem() { Treasure = tr, TreasureID = i };
+                    var values = m_windowData.SQLDatabase.GetTreasureValues(tr.ID);
+                    var owners = m_windowData.SQLDatabase.GetTreasureOwners(tr.ID);
+
+                    foreach (var owner in owners)
+                        trItem.TreasureOwner.Add(new StringWrapped { Value = owner });
+                    foreach (var value in values)
+                        trItem.TreasureValue.Add(value);
+                    m_windowData.PlaceDatas.TreasureList.Add(trItem);
+                    i++;
+                }
+            }
         }
 
         public void AddDate(CreateDate cd, Character[] chara)
@@ -262,29 +276,29 @@ namespace DandDAdventures.XAML
 
     public class WindowData : INotifyPropertyChanged
     {
-        public bool   m_canSave = false;
-        public String m_sqlPath = null;
+        public bool   m_canSave   = false;
+        public String m_sqlPath   = null;
         public String m_currentPJ = "";
 
-        protected DBHandler m_dbHandler;
+        protected DBHandler       m_dbHandler;
         protected ICommitDatabase m_commitDB;
-        protected ILinkName m_linkName;
-        protected ISelectedTree m_selectedTree;
+        protected ILinkName       m_linkName;
+        protected ISelectedTree   m_selectedTree;
 
         //DataContexts
-        protected PJDataContext m_pjDatas;
+        protected PJDataContext    m_pjDatas;
         protected PlaceDataContext m_placeDatas;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public WindowData(DBHandler sqlDatas, ICommitDatabase commitDB, ILinkName linkName, ISelectedTree selectedTree)
         {
-            m_dbHandler = sqlDatas;
-            m_commitDB = commitDB;
-            m_linkName = linkName;
+            m_dbHandler    = sqlDatas;
+            m_commitDB     = commitDB;
+            m_linkName     = linkName;
             m_selectedTree = selectedTree;
 
-            m_pjDatas = new PJDataContext(this);
+            m_pjDatas    = new PJDataContext(this);
             m_placeDatas = new PlaceDataContext(this);
         }
 
@@ -317,8 +331,9 @@ namespace DandDAdventures.XAML
             }
         }
 
-        public PJDataContext    PJDatas { get => m_pjDatas ;}
+        public PJDataContext    PJDatas    { get => m_pjDatas; }
         public PlaceDataContext PlaceDatas { get => m_placeDatas; }
+
         public String SQLPath { get => m_sqlPath; set => m_sqlPath = value; }
     }
 }

@@ -44,7 +44,7 @@ namespace DandDAdventures
     public class TreasureChara
     {
         [Key, Column(Order=0)]
-        public int IDtr { get; set; }
+        public int IDTR { get; set; }
         [Key, Column(Order=1)]
         public String CharaName { get; set; }
     }
@@ -79,14 +79,6 @@ namespace DandDAdventures
         public String Race  { get; set; }
         public String Story { get; set; }
         public Decimal Type { get; set; }
-    }
-
-    [Table("PJ")]
-    public class PJ
-    {
-        [Key]
-        public String Name   { get; set; }
-        public Decimal Level { get; set; }
     }
 
     [Table("CharaClass")]
@@ -130,7 +122,6 @@ namespace DandDAdventures
         public DbSet<Race>          Race          { get; set; }
         public DbSet<Class>         Class         { get; set; }
         public DbSet<Character>     Character     { get; set; }
-        public DbSet<PJ>            PJ            { get; set; }
         public DbSet<CharaClass>    CharaClass    { get; set; }
         public DbSet<GroupEvent>    GroupEvent    { get; set; }
         public DbSet<GroupBinding>  GroupBinding  { get; set; }
@@ -187,11 +178,6 @@ namespace DandDAdventures
                                     PRIMARY KEY(CHARANAME, CLASSNAME),
                                     FOREIGN KEY(CHARANAME) REFERENCES CHARACTER(NAME),
                                     FOREIGN KEY(CLASSNAME) REFERENCES CLASS(NAME));
-
-                                  CREATE TABLE PJ(
-                                    NAME VARCHAR(48),
-                                    LEVEL INTEGER,
-                                    FOREIGN KEY(NAME) REFERENCES CHARACTERS(NAME));
 
                                   CREATE TABLE GROUPEVENT(
                                     ID          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -268,6 +254,14 @@ namespace DandDAdventures
             return true;
         }
 
+        public void SetChara(Character chara)
+        {
+            foreach (var c in m_dbContext.Character.Where(d => d.Name == chara.Name).ToList())
+            {
+                c.Story = chara.Story;
+            }
+        }
+
         public bool AddRace(String sr, String r)
         {
             Race race = new Race()
@@ -303,7 +297,7 @@ namespace DandDAdventures
             return true;
         }
 
-        public bool AddPJ(Character c, PJ pj)
+        public bool AddPJ(Character c)
         {
             var d = from a in m_dbContext.Character
                     where a.Name == c.Name
@@ -314,7 +308,6 @@ namespace DandDAdventures
 
             c.Type = DBHandler.TYPE_PJ;
             m_dbContext.Character.Add(c);
-            m_dbContext.PJ.Add(pj);
 
             Commit();
 
@@ -383,6 +376,41 @@ namespace DandDAdventures
             Commit();
         }
 
+        public void SetTreasure(Treasure tr)
+        {
+            m_dbContext.Treasures.Where(d => d.ID == tr.ID).First().Opened = tr.Opened;
+            Commit();
+        }
+
+        public void AddTreasureOwner(TreasureChara trch)
+        {
+            m_dbContext.TreasureChara.Add(trch);
+            Commit();
+        }
+
+        public void RefreshTreasureOwner(TreasureItem ti)
+        {
+            //Delete every thing
+            var deleteVal = from tr in m_dbContext.TreasureChara
+                            where tr.IDTR == ti.Treasure.ID
+                            select tr;
+
+            m_dbContext.TreasureChara.RemoveRange(deleteVal);
+
+            //Commit everything
+            foreach (StringWrapped name in ti.TreasureOwner)
+                if(name.Value != "")
+                    AddTreasureOwner(new TreasureChara { CharaName = name.Value, IDTR = ti.Treasure.ID });
+
+            Commit();
+        }
+        
+        public void DeleteTreasureOwner(String charaName, int treasureID)
+        {
+            m_dbContext.TreasureChara.Remove(m_dbContext.TreasureChara.First(trch => trch.IDTR == treasureID && trch.CharaName == charaName));
+            Commit();
+        }
+
         public void ChangeSQLiteConnection(SQLiteConnection c, bool saveBefore = false)
         {
             if (saveBefore)
@@ -429,6 +457,16 @@ namespace DandDAdventures
                     where a.IDTR == trid
                     orderby a.ID
                     select a;
+
+            return d;
+        }
+
+        public IQueryable<String> GetTreasureOwners(int trid)
+        {
+            var d = from a in m_dbContext.TreasureChara
+                    where a.IDTR == trid
+                    orderby a.CharaName
+                    select a.CharaName;
 
             return d;
         }
