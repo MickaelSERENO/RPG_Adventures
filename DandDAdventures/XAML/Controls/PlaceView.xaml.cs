@@ -114,6 +114,14 @@ namespace DandDAdventures.XAML.Controls
             m_treasureList = new ObservableCollection<TreasureItem>();
         }
 
+        public void Clean()
+        {
+            PlaceList.Clear();
+            TreasureList.Clear();
+            TreasureSelected = null;
+            PlaceSelected = null;
+        }
+
         public void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

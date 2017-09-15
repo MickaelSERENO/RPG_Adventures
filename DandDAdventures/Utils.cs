@@ -15,6 +15,8 @@ namespace DandDAdventures
         public static void SetTextLink(TextBlock txt, String s, String[] listName, Style linkStyle, MouseButtonEventHandler ev)
         {
             txt.Inlines.Clear();
+            if (s == "")
+                return;
 
             //Sort by length, because the longest name is allways the correct one
             Array.Sort(listName, ((a, b) => b.Length - a.Length));

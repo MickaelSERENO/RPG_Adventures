@@ -24,7 +24,7 @@
         </DockPanel>
         <DockPanel>
             <TextBlock DockPanel.Dock="Top" Text="{StaticResource Summary}"/>
-            <TextBox   DockPanel.Dock="Top" Name="DescriptionBox" Text="{Binding Path=Description, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <TextBox   DockPanel.Dock="Top" Name="DescriptionBox" Text="{Binding Path=Description, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}" TextWrapping="Wrap" AcceptsReturn="True"/>
         </DockPanel>
     </DockPanel>
 </Window>

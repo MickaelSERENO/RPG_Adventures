@@ -45,7 +45,7 @@ namespace DandDAdventures.XAML
             Close();
         }
 
-        public String Description { get; set; }
+        public String Description { get; set; } = "";
         public bool IsAdded { get => m_results; }
     }
 }

@@ -382,6 +382,12 @@ namespace DandDAdventures
             Commit();
         }
 
+        public void SetDate(GroupEvent ev)
+        {
+            m_dbContext.GroupEvent.Where(d => d.ID == ev.ID).First().Description = ev.Description;
+            Commit();
+        }
+
         public void AddTreasureOwner(TreasureChara trch)
         {
             m_dbContext.TreasureChara.Add(trch);
@@ -528,6 +534,7 @@ namespace DandDAdventures
         {
             var d = from ge in m_dbContext.GroupEvent
                     join gb in m_dbContext.GroupBinding on ge.ID equals gb.GroupID
+                    where gb.Name == name
                     select ge;
 
             return d;

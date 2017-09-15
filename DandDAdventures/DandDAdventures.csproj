@@ -127,6 +127,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="XAML\EditDate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="XAML\EditPJ.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -152,6 +156,9 @@
     </Compile>
     <Compile Include="XAML\CreateDate.xaml.cs">
       <DependentUpon>CreateDate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="XAML\EditDate.xaml.cs">
+      <DependentUpon>EditDate.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\EditPJ.xaml.cs">
       <DependentUpon>EditPJ.xaml</DependentUpon>

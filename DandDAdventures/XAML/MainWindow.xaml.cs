@@ -94,6 +94,8 @@ namespace DandDAdventures.XAML
         //Simple menu commands
         private void NewFile(object sender, RoutedEventArgs e)
         {
+            m_windowData.Clean();
+
             if (m_windowData.SQLDatabase != null)
             {
                 //TODO maybe something
@@ -106,6 +108,8 @@ namespace DandDAdventures.XAML
 
         private void OpenFile(object sender, RoutedEventArgs e)
         {
+            m_windowData.Clean();
+
             OpenFileDialog openFile = new OpenFileDialog();
             if (openFile.ShowDialog() == true)
             {
@@ -114,7 +118,7 @@ namespace DandDAdventures.XAML
                     m_windowData.SQLDatabase = new DBHandler(String.Format("DataSource = {0}", openFile.FileName.Replace('\\', '/')));
                 else
                 {
-                    var sql = new SQLiteConnection(openFile.FileName);
+                    var sql = new SQLiteConnection(String.Format("DataSource = {0}", openFile.FileName.Replace('\\', '/')));
                     sql.Open();
                     m_windowData.SQLDatabase.ChangeSQLiteConnection(sql);
                 }
@@ -297,9 +301,18 @@ namespace DandDAdventures.XAML
             m_commitDB     = commitDB;
             m_linkName     = linkName;
             m_selectedTree = selectedTree;
-
             m_pjDatas    = new PJDataContext(this);
             m_placeDatas = new PlaceDataContext(this);
+        }
+
+        public void Clean()
+        {
+            CanSave = false;
+            CurrentPJ = null;
+            m_sqlPath = null;
+
+            m_pjDatas.Clean();
+            m_placeDatas.Clean();
         }
 
         public void OnPropertyChanged(string name)
@@ -328,6 +341,7 @@ namespace DandDAdventures.XAML
             set
             {
                 m_currentPJ = value;
+                OnPropertyChanged("CurrentPJ");
             }
         }
 
