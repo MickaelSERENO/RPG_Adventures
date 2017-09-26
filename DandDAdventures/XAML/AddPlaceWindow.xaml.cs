@@ -26,6 +26,7 @@ namespace DandDAdventures.XAML
         {
             m_wd = wd;
             this.DataContext = new AddPlaceDatas(wd);
+
             InitializeComponent();
         }
 
@@ -55,7 +56,7 @@ namespace DandDAdventures.XAML
         }
 
         public bool   PlaceAdded { get; set; } = false;
-        public String Name { get; set; }
-        public String PlaceStory { get; set; }
+        public String Name { get; set; } = "";
+        public String PlaceStory { get; set; } = "";
     }
 }
