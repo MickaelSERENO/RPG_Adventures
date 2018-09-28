@@ -18,9 +18,9 @@
             </Button>
         </StackPanel>
         <DockPanel>
-            <Grid DockPanel.Dock ="Top" VerticalAlignment="Top">
+            <Grid DockPanel.Dock ="Top" VerticalAlignment="Top" Margin="4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
 
@@ -36,6 +36,12 @@
                     <sys:String x:Key="Classe">Classe :</sys:String>
                     <sys:String x:Key="Race">Race :</sys:String>
                     <sys:String x:Key="HowToRace">Définir une Race. Pour ajouter une sous race faire "Race_Parente / "Race_Enfante"</sys:String>
+                    <Style TargetType="{x:Type TextBox}">
+                        <Setter Property="Margin" Value="0,0,0,4" />
+                    </Style>
+                    <Style TargetType="{x:Type DataGrid}">
+                        <Setter Property="Margin" Value="0,0,0,4" />
+                    </Style>
                 </Grid.Resources>
 
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="{StaticResource Name}" VerticalAlignment="Top"/>
@@ -45,42 +51,63 @@
                 <!--IsHitTestVisible=false for entering EditMode. EditMove necessary for adding new row-->
                 <DataGrid Name="CharaDataGrid" MinRowHeight="25" IsReadOnly="False" CanUserDeleteRows="True" CanUserAddRows="True" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Path=DataContext.ClassRows, ElementName=Window, UpdateSourceTrigger=PropertyChanged}" ColumnWidth="Auto" AutoGenerateColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="Classe">
+                        <DataGridTemplateColumn Header="Classe" MinWidth="120" Width="Auto">
                             <DataGridTemplateColumn.CellEditingTemplate>
                                 <DataTemplate>
-                                    <ComboBox Margin="5" x:Name="Class_ClassName" Width="100" LostFocus="ClassNameLostFocus" Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEditable="True"/>
+                                    <ComboBox Margin="5" x:Name="Class_ClassName" Width="Auto" LostFocus="ClassNameLostFocus" 
+                                              Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" 
+                                              ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, 
+                                              UpdateSourceTrigger=PropertyChanged}" 
+                                              IsEditable="True"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
 
-
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <ComboBox IsHitTestVisible="False" Margin="5" x:Name="Class_ClassName" Width="100" LostFocus="ClassNameLostFocus" Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEditable="True"/>
+                                    <ComboBox IsHitTestVisible="False" Margin="5" Width="Auto"
+                                              x:Name="Class_ClassName" LostFocus="ClassNameLostFocus" 
+                                              Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}"
+                                              ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, 
+                                              UpdateSourceTrigger=PropertyChanged}" 
+                                              IsEditable="True"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Header="Niveau">
+                        <DataGridTemplateColumn Header="Niveau" MinWidth="100">
                             <DataGridTemplateColumn.CellEditingTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Margin="5">
-                                        <TextBox x:Name="LevelTxt" Width="50" TextChanged="LevelTxtTextChanged" Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                        <StackPanel Orientation="Vertical">
-                                            <Button x:Name="LevelUp"   Content="+" Width="15" Height="15" Click="LevelUpClick" FontSize="12" VerticalContentAlignment="Top" />
-                                            <Button x:Name="LevelDown" Content="-" Width="15" Height="15" Click="LevelDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                    <Grid HorizontalAlignment="Stretch" Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="15"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="LevelTxt" TextChanged="LevelTxtTextChanged" 
+                                                 Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 Grid.Column="0"/>
+                                        <StackPanel Orientation="Vertical" Grid.Column="1">
+                                            <Button x:Name="LevelUp"   Content="+" Width="15" Height="15"
+                                                    Click="LevelUpClick" FontSize="12" VerticalContentAlignment="Top"/>
+                                            <Button x:Name="LevelDown" Content="-" Width="15" Height="15" 
+                                                    Click="LevelDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
                                         </StackPanel>
-                                    </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel IsHitTestVisible="False" Orientation="Horizontal" Margin="5">
-                                        <TextBox x:Name="LevelTxt" Width="50" TextChanged="LevelTxtTextChanged" Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                        <StackPanel Orientation="Vertical">
+                                    <Grid IsHitTestVisible="False" Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="15"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="LevelTxt" TextChanged="LevelTxtTextChanged" 
+                                                 Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 Grid.Column="0"/>
+                                        <StackPanel Orientation="Vertical" Grid.Column="1">
                                             <Button x:Name="LevelUp"   Content="+" Width="15" Height="15" Click="LevelUpClick" FontSize="12" VerticalContentAlignment="Top" />
                                             <Button x:Name="LevelDown" Content="-" Width="15" Height="15" Click="LevelDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
                                         </StackPanel>
-                                    </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -95,7 +122,7 @@
                 </ComboBox>
             </Grid>
 
-            <DockPanel Margin="0, 15, 0, 0">
+            <DockPanel Margin="5, 15, 0, 0">
                 <DockPanel.Resources>
                     <sys:String x:Key="Story">Story :</sys:String>
                 </DockPanel.Resources>

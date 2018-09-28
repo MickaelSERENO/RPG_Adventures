@@ -158,6 +158,8 @@ namespace DandDAdventures.XAML
         {
             ClassRow row = (ClassRow)m_dataGrid.SelectedItem;
             row.ClassLevel--;
+            if(row.ClassLevel < 0)
+                row.ClassLevel = 0;
 
             Button btn = (Button)sender;
             ((TextBox)(btn.FindName("LevelTxt"))).Text = row.ClassLevel.ToString();
