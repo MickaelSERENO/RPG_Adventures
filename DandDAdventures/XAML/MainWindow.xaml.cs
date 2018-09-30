@@ -278,12 +278,34 @@ namespace DandDAdventures.XAML
         }
     }
 
+    /// <summary>
+    /// The Application data shared by all the application components.
+    /// It extends INotifyPropertyChanged for changing the view when the internal data state has changed
+    /// </summary>
     public class WindowData : INotifyPropertyChanged
     {
-        public bool   m_canSave   = false;
-        public String m_sqlPath   = null;
-        public String m_currentPJ = "";
+        //////////////////////////
+        ////PRIVATE ATTRIBUTES////
+        //////////////////////////
+#region
+        /// <summary>
+        /// Can we save the application ?
+        /// </summary>
+        protected bool   m_canSave   = false;
 
+        /// <summary>
+        /// The actual sql system path
+        /// </summary>
+        protected String m_sqlPath   = null;
+
+        /// <summary>
+        /// The name of the current PJ selected
+        /// </summary>
+        protected String m_currentPJ = "";
+
+        /// <summary>
+        /// The database handler
+        /// </summary>
         protected DBHandler       m_dbHandler;
         protected ICommitDatabase m_commitDB;
         protected ILinkName       m_linkName;
@@ -293,8 +315,24 @@ namespace DandDAdventures.XAML
         protected PJDataContext    m_pjDatas;
         protected PlaceDataContext m_placeDatas;
 
+#endregion
+
+        /// <summary>
+        /// Event attributes permiting to notify the view that the model has changed
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        //////////////////////////
+        /////PUBLIC FUNCTIONS/////
+        //////////////////////////
+#region
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="sqlDatas">The database handler</param>
+        /// <param name="commitDB">The interface permitting to modify the database</param>
+        /// <param name="linkName"></param>
+        /// <param name="selectedTree"></param>
         public WindowData(DBHandler sqlDatas, ICommitDatabase commitDB, ILinkName linkName, ISelectedTree selectedTree)
         {
             m_dbHandler    = sqlDatas;
@@ -305,6 +343,9 @@ namespace DandDAdventures.XAML
             m_placeDatas = new PlaceDataContext(this);
         }
 
+        /// <summary>
+        /// Clear the application data. Used when "New" is pressed for example
+        /// </summary>
         public void Clean()
         {
             CanSave = false;
@@ -315,15 +356,24 @@ namespace DandDAdventures.XAML
             m_placeDatas.Clean();
         }
 
+        /// <summary>
+        /// Specify that a property has changed
+        /// </summary>
+        /// <param name="name">The name of the property</param>
         public void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+#endregion
 
-        public DBHandler SQLDatabase { get => m_dbHandler; set => m_dbHandler = value; }
-        public ICommitDatabase CommitDB { get => m_commitDB; }
-        public ILinkName LinkName { get => m_linkName; }
-        public ISelectedTree SelectedTree { get => m_selectedTree; }
+        ///////////////////////////
+        /////PUBLIC PROPERTIES/////
+        ///////////////////////////
+#region
+        public DBHandler       SQLDatabase  { get => m_dbHandler; set => m_dbHandler = value; }
+        public ICommitDatabase CommitDB     { get => m_commitDB; }
+        public ILinkName       LinkName     { get => m_linkName; }
+        public ISelectedTree   SelectedTree { get => m_selectedTree; }
 
         public bool CanSave
         {
@@ -349,5 +399,6 @@ namespace DandDAdventures.XAML
         public PlaceDataContext PlaceDatas { get => m_placeDatas; }
 
         public String SQLPath { get => m_sqlPath; set => m_sqlPath = value; }
+#endregion
     }
 }

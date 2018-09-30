@@ -15,12 +15,58 @@ using System.Windows.Shapes;
 
 namespace DandDAdventures.XAML
 {
+    /// <summary>
+    /// Represent a row of class in the PJ Add Window (a.k.a class name and class level)
+    /// </summary>
     public class ClassRow
     {
-        public String ClassName { get; set; }
-        public int ClassLevel { get; set; }
+        /// <summary>
+        /// The class name
+        /// </summary>
+        public String ClassName  { get; set; }
+
+        /// <summary>
+        /// The class level
+        /// </summary>
+        public int    ClassLevel { get; set; }
 
         public ClassRow() { }
+    }
+
+    /// <summary>
+    /// The Playable Character caracteristics (Str, Con, etc.)
+    /// </summary>
+    public class PJCaracteristics
+    {
+        /// <summary>
+        /// Strength
+        /// </summary>
+        public int Strength     { get; set; } = 10;
+
+        /// <summary>
+        /// Constitution
+        /// </summary>
+        public int Constitution { get; set; } = 10;
+
+        /// <summary>
+        /// Dexterity
+        /// </summary>
+        public int Dexterity    { get; set; } = 10;
+
+        /// <summary>
+        /// Intelligence
+        /// </summary>
+        public int Intelligence { get; set; } = 10;
+
+        /// <summary>
+        /// Wisdom
+        /// </summary>
+        public int Wisdom       { get; set; } = 10;
+
+        /// <summary>
+        /// Charisma
+        /// </summary>
+        public int Charisma     { get; set; } = 10;
     }
 
     /// <summary>
@@ -28,16 +74,61 @@ namespace DandDAdventures.XAML
     /// </summary>
     public partial class AddPJWindow : Window
     {
-        protected WindowData m_wd;
-        protected TextBox    m_nameEntry;
-        protected ComboBox   m_classCB;
-        protected ComboBox   m_raceCB;
-        protected TreeView   m_raceTV;
-        protected TextBox    m_storyEntry;
-        protected DataGrid   m_dataGrid;
+        ///////////////////////////////////
+        ////////PROTECTED ATTRIBUTES///////
+        ///////////////////////////////////
+#region
 
+        /// <summary>
+        /// The application data
+        /// </summary>
+        protected WindowData m_wd;
+
+        /// <summary>
+        /// The character name entered in the field box
+        /// </summary>
+        protected TextBox    m_nameEntry;
+
+        /// <summary>
+        /// The ComboxBox containing all the known class (Database)
+        /// </summary>
+        protected ComboBox   m_classCB;
+
+        /// <summary>
+        /// The ComboBox containing all the known race (Database)
+        /// </summary>
+        protected ComboBox   m_raceCB;
+
+        /// <summary>
+        /// The race tree view known in the database, a.k.a race hierarchy (super race)
+        /// </summary>
+        protected TreeView   m_raceTV;
+
+        /// <summary>
+        /// The story of the character entered
+        /// </summary>
+        protected TextBox    m_storyEntry;
+
+        /// <summary>
+        /// The Grid of the character class entered (multiple class available)
+        /// </summary>
+        protected DataGrid   m_classGrid;
+
+        /// <summary>
+        /// The data of this window
+        /// </summary>
         protected PJDataWindow m_pjWindowData;
 
+        /// <summary>
+        /// The character image icon
+        /// </summary>
+        protected Image m_characterImage;
+#endregion
+
+        /// <summary>
+        /// Constructor. Get and initialize all the Widget components and internal states
+        /// </summary>
+        /// <param name="wd">The application data</param>
         public AddPJWindow(WindowData wd)
         {
             m_pjWindowData   = new PJDataWindow(wd);
@@ -48,16 +139,18 @@ namespace DandDAdventures.XAML
             m_wd = wd;
 
             //Get every Widgets
-            m_nameEntry  = (TextBox)FindName("NameEntry");
-            m_raceCB     = (ComboBox)FindName("RaceCB");
-            m_raceTV     = (TreeView)FindName("RaceTV");
-            m_storyEntry = (TextBox)FindName("StoryEntry");
-            m_dataGrid   = (DataGrid)FindName("CharaDataGrid");
+            m_nameEntry     = (TextBox)FindName("NameEntry");
+            m_raceCB        = (ComboBox)FindName("RaceCB");
+            m_raceTV        = (TreeView)FindName("RaceTV");
+            m_storyEntry    = (TextBox)FindName("StoryEntry");
+            m_classGrid     = (DataGrid)FindName("CharaDataGrid");
+            m_characterImage = (Image)FindName("CaraImageIcon");
 
+            //Prompt the database
             var superRaceVal = wd?.SQLDatabase.GetSuperRaces();
             var raceVal      = wd?.SQLDatabase.GetRaces();
 
-            //Fill the Items thanks to the Database
+            //Fill the race thanks to the Database
             foreach(var sr in superRaceVal)
                 m_raceTV.Items.Add(new TreeViewItem() { Header = sr.Name });
 
@@ -67,6 +160,12 @@ namespace DandDAdventures.XAML
                         s.Items.Add(new TreeViewItem() { Header = r.Name });
         }
 
+        /// <summary>
+        /// Find the first parent of the parameter matching the type T
+        /// </summary>
+        /// <typeparam name="T">The type of the nearest parent asked. Must inherite from DependencyObject (a.k.a Base WPF Class)</typeparam>
+        /// <param name="obj">The object to look at</param>
+        /// <returns>The parent of obj or null if not found</returns>
         public T FindParent<T>(DependencyObject obj) where T : DependencyObject
         {
             if (obj == null)
@@ -78,6 +177,15 @@ namespace DandDAdventures.XAML
                 return FindParent<T>(VisualTreeHelper.GetParent(obj));
         }
 
+        ////////////////////////////////
+        /////THE CALLBACK FUNCTIONS/////
+        ////////////////////////////////
+#region
+        /// <summary>
+        /// Function called when the Add Button is pressed. Add the PJ into the database
+        /// </summary>
+        /// <param name="sender">The sender of the action (Button)</param>
+        /// <param name="e">The RoutedEventArgs associated with this click</param>
         private void AddPJClick(object sender, RoutedEventArgs e)
         {
             //TODO show where is a problem
@@ -87,6 +195,7 @@ namespace DandDAdventures.XAML
             var classVal = m_wd?.SQLDatabase.GetClasses();
             Class[] classArray = classVal.ToArray();
 
+            //Look if the class entered has to be added into the database (not known class)
             foreach (var c1 in m_pjWindowData.ClassRows)
             {
                 bool add = true;
@@ -104,9 +213,10 @@ namespace DandDAdventures.XAML
             String[] raceSplitted = m_raceCB.Text.Split(new Char[] { '/' });
             if(raceSplitted.Length > 2 || m_raceCB.Text == "")
             {
-                //TODO
+                //TODO multiple race hierarchy
             }
 
+            //Look if we should add the super race and the race into the database
             bool newSuperRace = true;
             bool newRace      = true;
             foreach(TreeViewItem sr in m_raceTV.Items)
@@ -122,19 +232,26 @@ namespace DandDAdventures.XAML
 
             if (newSuperRace)
                 m_wd.SQLDatabase.AddSuperRace(raceSplitted[0]);
-
             if (newRace && raceSplitted.Length > 1)
                 m_wd.SQLDatabase.AddRace(raceSplitted[0], raceSplitted[1]);
 
-            //Add the Character
-            m_pjWindowData.AddPJ(new Character { Name = m_nameEntry.Text, Race = m_raceCB.Text.Split(new Char[] { '/' }).Last(), Story = StoryEntry.Text });
+            //Add the Character into the database
+            m_pjWindowData.AddPJ(new Character { Name = m_nameEntry.Text, Race = m_raceCB.Text.Split(new Char[] { '/' }).Last(), Story = StoryEntry.Text,
+                Str  = m_pjWindowData.Caracteristics.Strength,     Con  = m_pjWindowData.Caracteristics.Constitution, Dex  = m_pjWindowData.Caracteristics.Dexterity,
+                Int  = m_pjWindowData.Caracteristics.Intelligence, Wis  = m_pjWindowData.Caracteristics.Wisdom      , Cha  = m_pjWindowData.Caracteristics.Charisma
+            });
 
-            //Then Add the Character Classes
+            //Then Add the Character Classes (a.k.a association between a character and ALL its classes)
             m_pjWindowData.AddCharaRowsToDb(m_nameEntry.Text);
 
             Close();
         }
 
+        /// <summary>
+        /// Function class when the Race ComboBox is closed. Changed the text displayed following what is selected
+        /// </summary>
+        /// <param name="sender">The sender of the action, a.k.a the ComboBox</param>
+        /// <param name="e">The EventArgs associated with this action</param>
         private void RaceCBDropDownClosed(object sender, EventArgs e)
         {
             //At the drop down of the RaceCB, change the Text following what is selected in the TreeView
@@ -145,18 +262,28 @@ namespace DandDAdventures.XAML
                 cb.Text = "";
         }
                    
+        /// <summary>
+        /// Function called when the "+" Level button is pressed. Change the level of the associated class for this character
+        /// </summary>
+        /// <param name="sender">The sender of the action (Button +)</param>
+        /// <param name="e">The RoutedEventArgs associated with this action</param>
         private void LevelUpClick(object sender, RoutedEventArgs e)
         {
-            ClassRow row = (ClassRow)m_dataGrid.SelectedItem;
+            ClassRow row = (ClassRow)m_classGrid.SelectedItem;
             row.ClassLevel++;
 
             Button btn = (Button)sender;
             ((TextBox)(btn.FindName("LevelTxt"))).Text = row.ClassLevel.ToString();
         }
 
+        /// <summary>
+        /// Function called when the "-" Level button is pressed. Change the level of the associated class for this character
+        /// </summary>
+        /// <param name="sender">The sender of the action (Button -)</param>
+        /// <param name="e">The RoutedEventArgs associated with this action</param>
         private void LevelDownClick(object sender, RoutedEventArgs e)
         {
-            ClassRow row = (ClassRow)m_dataGrid.SelectedItem;
+            ClassRow row = (ClassRow)m_classGrid.SelectedItem;
             row.ClassLevel--;
             if(row.ClassLevel < 0)
                 row.ClassLevel = 0;
@@ -165,38 +292,187 @@ namespace DandDAdventures.XAML
             ((TextBox)(btn.FindName("LevelTxt"))).Text = row.ClassLevel.ToString();
         }
 
+        /// <summary>
+        /// Function called when the "+" button for a characteristics. The associated characteristics is defined by the Tag of the Button (sender).
+        /// </summary>
+        /// <param name="sender">The sender of the action (Button +)</param>
+        /// <param name="e">The RoutedEventArgs associated with this action</param>
+        private void CaraUpClick(object sender, RoutedEventArgs e)
+        {
+            Button btn = (Button)sender;
+
+            switch(int.Parse((string)btn.Tag))
+            {
+                case 0:
+                    m_pjWindowData.Caracteristics.Strength++;
+                    break;
+                case 1:
+                    m_pjWindowData.Caracteristics.Constitution++;
+                    break;
+                case 2:
+                    m_pjWindowData.Caracteristics.Dexterity++;
+                    break;
+                case 3:
+                    m_pjWindowData.Caracteristics.Intelligence++;
+                    break;
+                case 4:
+                    m_pjWindowData.Caracteristics.Wisdom++;
+                    break;
+                case 5:
+                    m_pjWindowData.Caracteristics.Charisma++;
+                    break;
+            }
+            
+            m_pjWindowData.OnPropertyChanged("Caracteristics");
+        }
+
+        /// <summary>
+        /// Function called when the "-" button for a characteristics. The associated characteristics is defined by the Tag of the Button (sender).
+        /// </summary>
+        /// <param name="sender">The sender of the action (Button -)</param>
+        /// <param name="e">The RoutedEventArgs associated with this action</param>
+        private void CaraDownClick(object sender, RoutedEventArgs e)
+        {
+            Button btn = (Button)sender;
+
+            switch(int.Parse((string)btn.Tag))
+            {
+                case 0:
+                    m_pjWindowData.Caracteristics.Strength     = (m_pjWindowData.Caracteristics.Strength < 1 ? 
+                                                                  0 : m_pjWindowData.Caracteristics.Strength-1);
+                    break;
+                case 1:
+                    m_pjWindowData.Caracteristics.Constitution = (m_pjWindowData.Caracteristics.Constitution < 1 ? 
+                                                                  0 : m_pjWindowData.Caracteristics.Constitution-1);
+                    break;
+                case 2:
+                    m_pjWindowData.Caracteristics.Dexterity    = (m_pjWindowData.Caracteristics.Dexterity < 1 ?
+                                                                  0 : m_pjWindowData.Caracteristics.Dexterity-1);
+                    break;
+                case 3:
+                    m_pjWindowData.Caracteristics.Intelligence = (m_pjWindowData.Caracteristics.Intelligence < 1 ? 
+                                                                  0 : m_pjWindowData.Caracteristics.Intelligence-1);
+                    break;
+                case 4:
+                    m_pjWindowData.Caracteristics.Wisdom       = (m_pjWindowData.Caracteristics.Wisdom < 1 ? 
+                                                                  0 : m_pjWindowData.Caracteristics.Wisdom-1);
+                    break;
+                case 5:
+                    m_pjWindowData.Caracteristics.Charisma     = (m_pjWindowData.Caracteristics.Charisma < 1 ? 
+                                                                  0 : m_pjWindowData.Caracteristics.Charisma-1);
+                    break;
+            }
+
+            m_pjWindowData.OnPropertyChanged("Caracteristics");
+        }
+
+        /// <summary>
+        /// Function called when the text associated with the level is modified
+        /// </summary>
+        /// <param name="sender">The sender of the action (TextBox)</param>
+        /// <param name="e">The TextChangedEventArgs associated with this action</param>
         private void LevelTxtTextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox text = (TextBox)sender;
             if (!int.TryParse(text.Text, out int numValue))
                 text.Text = numValue.ToString();
         }
-
-        public PJDataWindow Datas { get => m_pjWindowData; }
-
+        
+        /// <summary>
+        /// Function called when the class name has lost the focus. We add the text entered into the known class
+        /// </summary>
+        /// <param name="sender">The sender of the action (ComboBox)</param>
+        /// <param name="e">The RoutedEventArgs associated with this action</param>
         private void ClassNameLostFocus(object sender, RoutedEventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
             m_pjWindowData.AddClassList(cb.Text);
         }
+
+        /// <summary>
+        /// Function called when the Icon Image Button is clicked. Opens a Dialog to select a new icon
+        /// </summary>
+        /// <param name="sender">The sender of the action (Button)</param>
+        /// <param name="e">The RoutedEventArgs associated with this action</param>
+        private void ChangeCharacterIcon(object sender, RoutedEventArgs e)
+        {
+            String path = null;
+            if(!Utils.OpenFileDialog("Sélectionner l'icon du personnage courant", out path))
+                return;
+
+            Datas.IconPath = path;
+            m_characterImage.Stretch = Stretch.Uniform;
+        }
+#endregion
+
+        /// <summary>
+        /// The Internal data associated with this Window accessible via the XAML
+        /// </summary>
+        public PJDataWindow Datas { get => m_pjWindowData; }
+
     }
 
+    /// <summary>
+    /// The internal data of the PJWindow
+    /// </summary>
     public class PJDataWindow : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Event object permitting to notify when a property has changed
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected WindowData m_wd;
-        protected List<ClassRow>  m_classRow;
-        protected List<String>    m_classList;
-        protected List<Character> m_characters;
-        protected bool            m_characterAdded;
+        /// <summary>
+        /// The Application data structure
+        /// </summary>
+        protected WindowData       m_wd;
+
+        /// <summary>
+        /// List of class in creation (see ClassRow)
+        /// </summary>
+        protected List<ClassRow>   m_classRow;
+
+        /// <summary>
+        /// List of known classes
+        /// </summary>
+        protected List<String>     m_classList;
+
+        /// <summary>
+        /// List of known characters
+        /// </summary>
+        protected List<Character>  m_characters;
+
+        /// <summary>
+        /// Caracteristics of the character (see PJCaracteristics)
+        /// </summary>
+        protected PJCaracteristics m_caracteristics;
+
+        /// <summary>
+        /// The path of the in-progress character's icon
+        /// </summary>
+        protected String           m_iconPath;
+
+        /// <summary>
+        /// Have we changed the icon ?
+        /// </summary>
+        protected bool             m_iconDefined;
+
+        /// <summary>
+        /// Is the character added ?
+        /// </summary>
+        protected bool             m_characterAdded;
 
         public PJDataWindow(WindowData wd)
         {
             m_wd = wd;
-            m_characters = new List<Character>();
-            m_classRow   = new List<ClassRow>();
-            m_classList  = new List<String>();
+            m_characters     = new List<Character>();
+            m_classRow       = new List<ClassRow>();
+            m_classList      = new List<String>();
+            m_caracteristics = new PJCaracteristics();
+
+            //Initialize the Icon values
+            m_iconPath    = System.AppDomain.CurrentDomain.BaseDirectory+"/Resources/DefaultCaracterIcon.png";
+            m_iconDefined = false;
 
             //Fill the class List
             var classVal = wd?.SQLDatabase.GetClasses();
@@ -262,6 +538,8 @@ namespace DandDAdventures.XAML
             }
         }
 
-        public List<String> ClassList { get => m_classList; set { m_classList = value; OnPropertyChanged("ClassList"); } }
+        public PJCaracteristics Caracteristics { get => m_caracteristics; set { m_caracteristics = value; OnPropertyChanged("Caracteristics");  } }
+        public List<String> ClassList          { get => m_classList;      set { m_classList      = value; OnPropertyChanged("ClassList"); } }
+        public String IconPath                 { get => m_iconPath;       set { m_iconPath       = value; OnPropertyChanged("IconPath"); m_iconDefined = true; } }
     }
 }

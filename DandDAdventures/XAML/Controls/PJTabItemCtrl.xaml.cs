@@ -17,10 +17,13 @@ using System.Windows.Shapes;
 namespace DandDAdventures.XAML.Controls
 {
     /// <summary>
-    /// Logique d'interaction pour TabItem.xaml
+    /// Interaction Logic for TabItem.xaml
     /// </summary>
     public partial class PJTabItemCtrl : UserControl
     {
+        /// <summary>
+        /// The Application data
+        /// </summary>
         private WindowData      m_wd;
         private IActionListener m_addListener  = null;
         private ICommand        m_createDate   = null;
@@ -102,10 +105,8 @@ namespace DandDAdventures.XAML.Controls
             CreateDate cd = new CreateDate(m_wd, m_listView.SelectedItems.Cast<Character>().ToArray());
             cd.ShowDialog();
 
-            if (cd.IsAdded)
+            if(cd.IsAdded)
                 m_wd.SelectedTree.AddDate(cd, m_listView.SelectedItems.Cast<Character>().ToArray());
         }
-
-
     }
 }

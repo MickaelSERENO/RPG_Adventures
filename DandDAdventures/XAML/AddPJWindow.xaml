@@ -3,132 +3,330 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DandDAdventures.XAML"
+        xmlns:local="clr-namespace:DandDAdventures.XAML.Controls"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Ajouté PJ" Height="300" Width="300"
+        Title="Ajouter PJ/PNJ" Height="500" Width="600"
         x:Name="Window">
-    <DockPanel>
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- The icon of the character -->
+        <DockPanel Grid.Column="0" Grid.Row="0">
+            <Button Click="ChangeCharacterIcon">
+                <Image Source="{Binding IconPath}" Stretch="Fill" x:Name="CaraImageIcon"/>
+            </Button>
+        </DockPanel>
+        
+        <!-- The data of the character -->
+        <DockPanel Grid.Column="1" Grid.Row="0" Margin="10,0,0,0">
+            <DockPanel DockPanel.Dock ="Top" Width="Auto">
+                <DockPanel.Resources>
+                    <sys:String x:Key="Name">Nom Personnage</sys:String>
+                    <sys:String x:Key="NamePlayer">Nom du Joueur</sys:String>
+                    <sys:String x:Key="Gender">Sexe</sys:String>
+                    <sys:String x:Key="Alignment">Alignement</sys:String>
+                    <sys:String x:Key="Classe">Classe</sys:String>
+                    <sys:String x:Key="Race">Race</sys:String>
+                    <sys:String x:Key="Caracteristics">Caracteristiques</sys:String>
+                    <sys:String x:Key="HowToRace">Définir une Race. Pour ajouter une sous race faire "Race_Parente / "Race_Enfante"</sys:String>
+                </DockPanel.Resources>
+
+                <DockPanel Margin="0,10,0,0" DockPanel.Dock="Top">
+                    <!-- The characteristics-->
+                    <StackPanel DockPanel.Dock="Right" Margin="10,0,10,0">
+                        <TextBlock Text="{StaticResource Caracteristics}" Margin="5,0,0,5"></TextBlock>
+                        <Grid Margin="25,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.Resources>
+                                <sys:String x:Key="Strength">For :</sys:String>
+                                <sys:String x:Key="HowToStrength">Force du personnage</sys:String>
+                                <sys:String x:Key="Constitution">Con :</sys:String>
+                                <sys:String x:Key="HowToConstitution">Constitution du personnage</sys:String>
+                                <sys:String x:Key="Dexterity">Dex :</sys:String>
+                                <sys:String x:Key="HowToDexterity">Dextérité du personnage</sys:String>
+                                <sys:String x:Key="Intelligence">Int :</sys:String>
+                                <sys:String x:Key="HowToIntelligence">Intelligence du personnage</sys:String>
+                                <sys:String x:Key="Wisdom">Sag :</sys:String>
+                                <sys:String x:Key="HowToWisdom">Sagesse du personnage</sys:String>
+                                <sys:String x:Key="Charisma">Cha :</sys:String>
+                                <sys:String x:Key="HowToCharisma">Charisme du personnage</sys:String>
+                            </Grid.Resources>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{StaticResource Strength}" ToolTip="{StaticResource HowToStrength}"/>
+                            <Grid Grid.Row="0" Grid.Column="1" Margin="5,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="45"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox x:Name="StrengthTxtChanged" Grid.Column="0" Height="15"
+                                         Text="{Binding Caracteristics.Strength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                    <Button x:Name="StrengthUp" Content="+" Width="15" Height="15" Tag="0"
+                                        Click="CaraUpClick" FontSize="12" VerticalContentAlignment="Top"/>
+                                    <Button x:Name="StrengthDown" Content="-" Width="15" Height="15" Tag="0"
+                                        Click="CaraDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{StaticResource Constitution}" ToolTip="{StaticResource HowToConstitution}"/>
+                            <Grid Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="45"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="ConstitutionTxtChanged" Grid.Column="0" Height="15"
+                                         Text="{Binding Caracteristics.Constitution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                    <Button x:Name="ConstitutionUp" Content="+" Width="15" Height="15" Tag="1" 
+                                        Click="CaraUpClick" FontSize="12" VerticalContentAlignment="Top"/>
+                                    <Button x:Name="ConstitutionDown" Content="-" Width="15" Height="15" Tag="1"
+                                        Click="CaraDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{StaticResource Dexterity}" ToolTip="{StaticResource HowToDexterity}"/>
+                            <Grid Grid.Row="2" Grid.Column="1" Margin="5,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="45"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="DexterityTxtChanged" Grid.Column="0" Height="15"
+                                         Text="{Binding Caracteristics.Dexterity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+                                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                    <Button x:Name="DexterityUp" Content="+" Width="15" Height="15" Tag="2"
+                                        Click="CaraUpClick" FontSize="12" VerticalContentAlignment="Top"/>
+                                    <Button x:Name="DexterityDown" Content="-" Width="15" Height="15" Tag="2"
+                                        Click="CaraDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="{StaticResource Intelligence}" ToolTip="{StaticResource HowToIntelligence}"/>
+                            <Grid Grid.Row="3" Grid.Column="1" Margin="5,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="45"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="IntelligenceTxtChanged" Grid.Column="0" Height="15"
+                                         Text="{Binding Caracteristics.Intelligence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                    <Button x:Name="IntelligenceUp" Content="+" Width="15" Height="15" Tag="3"
+                                        Click="CaraUpClick" FontSize="12" VerticalContentAlignment="Top"/>
+                                    <Button x:Name="IntelligenceDown" Content="-" Width="15" Height="15" Tag="3"
+                                        Click="CaraDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{StaticResource Wisdom}" ToolTip="{StaticResource HowToWisdom}"/>
+                            <Grid Grid.Row="4" Grid.Column="1" Margin="5,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="45"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="WisdomTxtChanged" Grid.Column="0" Height="15"
+                                         Text="{Binding Caracteristics.Wisdom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                    <Button x:Name="WisdomUp" Content="+" Width="15" Height="15" Tag="4"
+                                        Click="CaraUpClick" FontSize="12" VerticalContentAlignment="Top"/>
+                                    <Button x:Name="WisdomDown" Content="-" Width="15" Height="15" Tag="4"
+                                        Click="CaraDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="{StaticResource Charisma}" ToolTip="{StaticResource HowToCharisma}"/>
+                            <Grid Grid.Row="5" Grid.Column="1" Margin="5,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="45"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="CharismaTxtChanged" Grid.Column="0" Height="15"                                        
+                                         Text="{Binding Caracteristics.Charisma, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                    <Button x:Name="CharismaUp" Content="+" Width="15" Height="15" Tag="5"
+                                        Click="CaraUpClick" FontSize="12" VerticalContentAlignment="Top"/>
+                                    <Button x:Name="CharismaDown" Content="-" Width="15" Height="15" Tag="5"
+                                        Click="CaraDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- The common data (name, gender, etc.)-->
+                    <Grid VerticalAlignment="Top" Margin="0,0,0,0" DockPanel.Dock="Left" Width="Auto">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.Resources>
+                            <Style TargetType="TextBox" >
+                                <Setter Property="Margin" Value="5,0,0,5" />
+                            </Style>
+                        </Grid.Resources>
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="" Margin="0,0,0,5"/>
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="{StaticResource Name}" VerticalAlignment="Top"/>
+                        <TextBox   Grid.Column="1" Grid.Row="1" Name="NameEntry"/>
+                        <TextBlock Grid.Column="0" Grid.Row="2" Text="{StaticResource NamePlayer}" VerticalAlignment="Top"/>
+                        <TextBox   Grid.Column="1" Grid.Row="2" Name="NamePlayerEntry"/>
+                        <TextBlock Grid.Column="0" Grid.Row="3" Text="{StaticResource Gender}" VerticalAlignment="Top"/>
+                        <TextBox   Grid.Column="1" Grid.Row="3" Name="GenderEntry"/>
+                        <TextBlock Grid.Column="0" Grid.Row="4" Text="{StaticResource Alignment}" VerticalAlignment="Top"/>
+                        <TextBox   Grid.Column="1" Grid.Row="4" Name="AlignmentEntry"/>
+                    </Grid>
+                </DockPanel>
+                
+                <!-- The race, classes -->
+                <Grid DockPanel.Dock="Bottom" Margin="0,30,5,0" MinHeight="100">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" Grid.Row="0" Text="{StaticResource Race}" ToolTip="{StaticResource HowToRace}" Margin="0,0,5,0"/>
+                    <ComboBox IsTextSearchEnabled="False" Grid.Column="1" Grid.Row="0" IsEditable="True" x:Name="RaceCB" 
+                                ToolTip="{StaticResource HowToRace}" DropDownClosed="RaceCBDropDownClosed">
+                        <ComboBoxItem HorizontalAlignment="Stretch">
+                            <TreeView ItemsSource="{Binding Children}" x:Name="RaceTV" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{Binding ElementName=RaceCB, Path=ActualWidth}"/>
+                        </ComboBoxItem>
+                    </ComboBox>
+
+                    <!--IsHitTestVisible=false for entering EditMode. EditMove necessary for adding new row-->
+                    <DataGrid Name="CharaDataGrid" MinRowHeight="25" IsReadOnly="False" CanUserDeleteRows="True" CanUserAddRows="True" Grid.Column="0" Grid.Row="2" 
+                                Grid.ColumnSpan="2" ItemsSource="{Binding Path=DataContext.ClassRows, ElementName=Window, UpdateSourceTrigger=PropertyChanged}" ColumnWidth="Auto" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Classe" MinWidth="120" Width="Auto">
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <ComboBox Margin="5" x:Name="Class_ClassName" Width="Auto" LostFocus="ClassNameLostFocus" 
+                                                Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" 
+                                                ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, 
+                                                UpdateSourceTrigger=PropertyChanged}" 
+                                                IsEditable="True"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsHitTestVisible="False" Margin="5" Width="Auto"
+                                                x:Name="Class_ClassName" LostFocus="ClassNameLostFocus" 
+                                                Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}"
+                                                ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, 
+                                                UpdateSourceTrigger=PropertyChanged}" 
+                                                IsEditable="True"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Niveau" MinWidth="100">
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <Grid HorizontalAlignment="Stretch" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="15"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="LevelTxt" TextChanged="LevelTxtTextChanged" 
+                                                    Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    Grid.Column="0"/>
+                                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                                <Button x:Name="LevelUp"   Content="+" Width="15" Height="15"
+                                                    Click="LevelUpClick" FontSize="12" VerticalContentAlignment="Top"/>
+                                                <Button x:Name="LevelDown" Content="-" Width="15" Height="15" 
+                                                    Click="LevelDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid IsHitTestVisible="False" Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="15"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="LevelTxt" TextChanged="LevelTxtTextChanged" 
+                                                    Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    Grid.Column="0"/>
+                                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                                <Button x:Name="LevelUp"   Content="+" Width="15" Height="15" Click="LevelUpClick" FontSize="12" VerticalContentAlignment="Top" />
+                                                <Button x:Name="LevelDown" Content="-" Width="15" Height="15" Click="LevelDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </DockPanel>
+
+            <!--The story-->
+            <Grid Margin="0,15,10,0">
+                <Grid.Resources>
+                    <sys:String x:Key="Story">Résumé :</sys:String>
+                    <sys:String x:Key="FileDescription">Sélectionner un fichier à ajouter à cette fiche de personnage.</sys:String>
+                </Grid.Resources>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" Text="{StaticResource Story}"/>
+                <TextBox Grid.Row="1" x:Name="StoryEntry" TextWrapping="Wrap" AcceptsReturn="True"/>
+                <local:FilePath Grid.Row="2" Margin="0,5,0,0" Description="{StaticResource FileDescription}"></local:FilePath>
+            </Grid>
+        </DockPanel>
+
+        <!-- The add button-->
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,10,5">
             <StackPanel.Resources>
-                <sys:String x:Key="Add">Ajouté</sys:String>
+                <sys:String x:Key="Add">Ajouter</sys:String>
             </StackPanel.Resources>
             <Button Name="AddPJ" HorizontalAlignment="Right" Click="AddPJClick">
                 <TextBlock Text="{StaticResource Add}"/>
             </Button>
         </StackPanel>
-        <DockPanel>
-            <Grid DockPanel.Dock ="Top" VerticalAlignment="Top" Margin="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="10*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-                
-                <Grid.Resources>
-                    <sys:String x:Key="Name">Nom :</sys:String>
-                    <sys:String x:Key="Classe">Classe :</sys:String>
-                    <sys:String x:Key="Race">Race :</sys:String>
-                    <sys:String x:Key="HowToRace">Définir une Race. Pour ajouter une sous race faire "Race_Parente / "Race_Enfante"</sys:String>
-                    <Style TargetType="{x:Type TextBox}">
-                        <Setter Property="Margin" Value="0,0,0,4" />
-                    </Style>
-                    <Style TargetType="{x:Type DataGrid}">
-                        <Setter Property="Margin" Value="0,0,0,4" />
-                    </Style>
-                </Grid.Resources>
-
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="{StaticResource Name}" VerticalAlignment="Top"/>
-                <TextBox   Grid.Column="1" Grid.Row="0" Name="NameEntry"/>
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="{StaticResource Classe}"/>
-
-                <!--IsHitTestVisible=false for entering EditMode. EditMove necessary for adding new row-->
-                <DataGrid Name="CharaDataGrid" MinRowHeight="25" IsReadOnly="False" CanUserDeleteRows="True" CanUserAddRows="True" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Path=DataContext.ClassRows, ElementName=Window, UpdateSourceTrigger=PropertyChanged}" ColumnWidth="Auto" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="Classe" MinWidth="120" Width="Auto">
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                                <DataTemplate>
-                                    <ComboBox Margin="5" x:Name="Class_ClassName" Width="Auto" LostFocus="ClassNameLostFocus" 
-                                              Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" 
-                                              ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, 
-                                              UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEditable="True"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
-
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ComboBox IsHitTestVisible="False" Margin="5" Width="Auto"
-                                              x:Name="Class_ClassName" LostFocus="ClassNameLostFocus" 
-                                              Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}"
-                                              ItemsSource="{Binding Path=DataContext.ClassList, ElementName=Window, Mode=OneWay, 
-                                              UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEditable="True"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Niveau" MinWidth="100">
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                                <DataTemplate>
-                                    <Grid HorizontalAlignment="Stretch" Margin="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="15"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox x:Name="LevelTxt" TextChanged="LevelTxtTextChanged" 
-                                                 Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 Grid.Column="0"/>
-                                        <StackPanel Orientation="Vertical" Grid.Column="1">
-                                            <Button x:Name="LevelUp"   Content="+" Width="15" Height="15"
-                                                    Click="LevelUpClick" FontSize="12" VerticalContentAlignment="Top"/>
-                                            <Button x:Name="LevelDown" Content="-" Width="15" Height="15" 
-                                                    Click="LevelDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid IsHitTestVisible="False" Margin="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="15"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox x:Name="LevelTxt" TextChanged="LevelTxtTextChanged" 
-                                                 Text="{Binding ClassLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 Grid.Column="0"/>
-                                        <StackPanel Orientation="Vertical" Grid.Column="1">
-                                            <Button x:Name="LevelUp"   Content="+" Width="15" Height="15" Click="LevelUpClick" FontSize="12" VerticalContentAlignment="Top" />
-                                            <Button x:Name="LevelDown" Content="-" Width="15" Height="15" Click="LevelDownClick" FontSize="12" VerticalContentAlignment="Bottom"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                
-                <TextBlock Grid.Column="0" Grid.Row="3" Text="{StaticResource Race}" ToolTip="{StaticResource HowToRace}"/>
-                <ComboBox IsTextSearchEnabled="False" Grid.Column="1" Grid.Row="3" IsEditable="True" x:Name="RaceCB" ToolTip="{StaticResource HowToRace}" DropDownClosed="RaceCBDropDownClosed">
-                    <ComboBoxItem HorizontalAlignment="Stretch">
-                        <TreeView ItemsSource="{Binding Children}" x:Name="RaceTV" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{Binding ElementName=RaceCB, Path=ActualWidth}"/>
-                    </ComboBoxItem>
-                </ComboBox>
-            </Grid>
-
-            <DockPanel Margin="5, 15, 0, 0">
-                <DockPanel.Resources>
-                    <sys:String x:Key="Story">Story :</sys:String>
-                </DockPanel.Resources>
-                <TextBlock DockPanel.Dock ="Top" Text="{StaticResource Story}"/>
-                <TextBox x:Name="StoryEntry" TextWrapping="Wrap" AcceptsReturn="True"/>
-            </DockPanel>
-        </DockPanel>
-    </DockPanel>
+    </Grid>
 </Window>

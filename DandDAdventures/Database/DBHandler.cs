@@ -6,45 +6,101 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using DandDAdventures.XAML;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
 
 namespace DandDAdventures
 {
-    //The class Table 
+
+    /////////////////////////////////////////////////////
+    //Database class, i.e sql class tables (Using Linq)//
+    /////////////////////////////////////////////////////
+    #region
+
+    /// <summary>
+    /// The Place SQL Table
+    /// </summary>
     [Table("Place")]
     public class Place
     {
+        /// <summary>
+        /// The name of the place
+        /// </summary>
         [Key]
         public String Name  { get; set; }
+
+        /// <summary>
+        /// A description
+        /// </summary>
         public String Story { get; set; }
     }
 
-    //Treasure SQL Tables
+    /// <summary>
+    /// Treasure SQL Table
+    /// </summary>
     [Table("Treasure")]
     public class Treasure
     {
+        /// <summary>
+        /// ID of the treasure. Generated automaticaly (do not set it when creating the object)
+        /// </summary>
         [Key]
         public int    ID        { get; set; } = -1;
+
+        /// <summary>
+        /// The place associated with this treasure
+        /// </summary>
         public String PlaceName { get; set; }
+
+        /// <summary>
+        /// Is the treasure opened ?
+        /// </summary>
         public bool   Opened    { get; set; }
     }
 
+    /// <summary>
+    /// TreasureValue SQL Table representing an object appartening to a treasure (see Treasure)
+    /// </summary>
     [Table("TreasureValue")]
     public class TreasureValue
     {
+        /// <summary>
+        /// ID of the object (treasure object). Generated automaticaly (do not set it when creating the object)
+        /// </summary>
         [Key]
         public int    ID      { get; set; } = -1;
+
+        /// <summary>
+        /// ID of the treasure associated with this object.
+        /// </summary>
         public int    IDTR    { get; set; }
+
+        /// <summary>
+        /// The object name
+        /// </summary>
         public String ObjName { get; set; }
+
+        /// <summary>
+        /// The object value (in gold for example)
+        /// </summary>
         public int    Value   { get; set; }
     }
 
+    /// <summary>
+    /// TreasureChara SQL Table representing the character which owns the treasure
+    /// Multiple characters can own that treasure
+    /// </summary>
     [Table("TreasureChara")]
     public class TreasureChara
     {
+        /// <summary>
+        /// ID of the treasure
+        /// </summary>
         [Key, Column(Order=0)]
         public int IDTR { get; set; }
+
+        /// <summary>
+        /// ID of the character
+        /// </summary>
         [Key, Column(Order=1)]
         public String CharaName { get; set; }
     }
@@ -75,10 +131,16 @@ namespace DandDAdventures
     public class Character
     {
         [Key]
-        public String Name  { get; set; }
-        public String Race  { get; set; }
-        public String Story { get; set; }
-        public Decimal Type { get; set; }
+        public String  Name  { get; set; }
+        public String  Race  { get; set; }
+        public String  Story { get; set; }
+        public Int32   Type  { get; set; }
+        public Int32   Str   { get; set; }
+        public Int32   Con   { get; set; }
+        public Int32   Dex   { get; set; }
+        public Int32   Int   { get; set; }
+        public Int32   Wis   { get; set; }
+        public Int32   Cha   { get; set; }
     }
 
     [Table("CharaClass")]
@@ -107,14 +169,28 @@ namespace DandDAdventures
         [Key, Column(Order = 2)]
         public String Name { get; set; }
     }
-
-    //The DBContext Class
+    #endregion
+    
+    /// <summary>
+    /// DBContext class (see linq). Contain object matching the content of the SQLite database (via DbSet)
+    /// </summary>
     public class DandDContext : DbContext
     { 
+        /// <summary>
+        /// Basic Constructor
+        /// </summary>
+        /// <param name="conn">The database connection</param>
         public DandDContext(DbConnection conn) : base(conn, true)
         { }
 
+        /// <summary>
+        /// List of places
+        /// </summary>
         public DbSet<Place>         Place         { get; set; }
+
+        /// <summary>
+        /// List of treasures
+        /// </summary>
         public DbSet<Treasure>      Treasures     { get; set; }
         public DbSet<TreasureChara> TreasureChara { get; set; }
         public DbSet<TreasureValue> TreasureValue { get; set; }
@@ -169,6 +245,12 @@ namespace DandDAdventures
                                     RACE VARCHAR(48),
                                     STORY TEXT,
                                     TYPE INTEGER,
+                                    STR  INTEGER,
+                                    CON  INTEGER,
+                                    DEX  INTEGER,
+                                    INT  INTEGER,
+                                    WIS  INTEGER,
+                                    CHA  INTEGER,
                                     FOREIGN KEY(RACE) REFERENCES RACE(NAME));
 
                                   CREATE TABLE CHARACLASS(
@@ -240,7 +322,7 @@ namespace DandDAdventures
         //////////////////////////////////////
         ////////////////Queries///////////////
         //////////////////////////////////////
-
+#region
         //Setters
         public bool AddClass(String c)
         {
@@ -562,5 +644,6 @@ namespace DandDAdventures
 
             return listName;
         }
+#endregion
     }
 }

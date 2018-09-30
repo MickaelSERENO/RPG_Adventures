@@ -10,7 +10,7 @@ namespace DandDAdventures.XAML.Listeners
     public class RelayCommand : ICommand
     {
         private Predicate<object> _canExecute;
-        private Action<object> _execute;
+        private Action<object>    _execute;
 
         public RelayCommand(Predicate<object> canExecute, Action<object> execute)
         {
@@ -20,7 +20,7 @@ namespace DandDAdventures.XAML.Listeners
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
+            add    { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
         }
 

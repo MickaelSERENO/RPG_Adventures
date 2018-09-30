@@ -5,13 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace DandDAdventures
 {
     class Utils
     {
+        /// <summary>
+        /// Modify a TextBlock for adding Inlines permitting to link a part of the text to an object (caracter, place, etc.)
+        /// </summary>
+        /// <param name="txt">The TextBlock to modify</param>
+        /// <param name="s">The string to look at</param>
+        /// <param name="listName">the key name to look at (a.k.a the available link)</param>
+        /// <param name="linkStyle">The style of the link text (blue text ?)</param>
+        /// <param name="ev">The event handler to pass to the "link" texts</param>
         public static void SetTextLink(TextBlock txt, String s, String[] listName, Style linkStyle, MouseButtonEventHandler ev)
         {
             txt.Inlines.Clear();
@@ -53,6 +63,7 @@ namespace DandDAdventures
                 }
             }
 
+            //Add the subtexts to the TextBlock
             for (int i = 0; i < subString.Count; i++)
             {
                 String str = subString[i];
@@ -67,6 +78,31 @@ namespace DandDAdventures
                 else
                     txt.Inlines.Add(new Run(str));
             }
+        }
+
+        /// <summary>
+        /// Openes a FileDialog in order to get a file
+        /// </summary>
+        /// <param name="description">The Description to display</param>
+        /// <param name="path">Variable where to store the Path. Must NOT BE NULL</param>
+        /// <returns>true on Success (dialog closed with OK), false on failure.</returns>
+        static public bool OpenFileDialog(String description, out String path)
+        {
+            path = null;
+
+            using(FolderBrowserDialog dlg = new FolderBrowserDialog())
+            {
+                dlg.Description         = description;
+                dlg.SelectedPath        = path;
+                dlg.ShowNewFolderButton = true;
+                DialogResult result     = dlg.ShowDialog();
+                if(result == System.Windows.Forms.DialogResult.OK)
+                {
+                    path = dlg.SelectedPath;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
