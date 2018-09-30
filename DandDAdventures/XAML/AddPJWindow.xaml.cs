@@ -2,16 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace DandDAdventures.XAML
 {
@@ -417,6 +410,10 @@ namespace DandDAdventures.XAML
     /// </summary>
     public class PJDataWindow : INotifyPropertyChanged
     {
+        ////////////////////////
+        ///PRIVATE ATTRIBUTES///  
+        ////////////////////////
+#region
         /// <summary>
         /// Event object permitting to notify when a property has changed
         /// </summary>
@@ -438,7 +435,7 @@ namespace DandDAdventures.XAML
         protected List<String>     m_classList;
 
         /// <summary>
-        /// List of known characters
+        /// List characters added. For now, this list is empty or contain only one entry
         /// </summary>
         protected List<Character>  m_characters;
 
@@ -461,7 +458,12 @@ namespace DandDAdventures.XAML
         /// Is the character added ?
         /// </summary>
         protected bool             m_characterAdded;
+#endregion
 
+        /// <summary>
+        /// The Constructor. Initialize the object based on the Application Data (WindowData)
+        /// </summary>
+        /// <param name="wd">The Application Data</param>
         public PJDataWindow(WindowData wd)
         {
             m_wd = wd;
@@ -474,14 +476,24 @@ namespace DandDAdventures.XAML
             m_iconPath    = System.AppDomain.CurrentDomain.BaseDirectory+"/Resources/DefaultCaracterIcon.png";
             m_iconDefined = false;
 
-            //Fill the class List
+            //Fill the list of class known
             var classVal = wd?.SQLDatabase.GetClasses();
             foreach (var c in classVal)
                 m_classList.Add(c.Name);
 
+            //Notify that we have filled the known classes
             OnPropertyChanged("DataContext.ClassRows");
         }
 
+        //////////////////////////
+        /////PUBLIC FUNCTIONS/////
+        //////////////////////////
+#region
+
+        /// <summary>
+        /// Add a PJ into the Database.
+        /// </summary>
+        /// <param name="chara">The character to add</param>
         public void AddPJ(Character chara)
         {
             m_wd.SQLDatabase?.AddPJ(chara);
@@ -489,6 +501,10 @@ namespace DandDAdventures.XAML
             m_characterAdded = true;
         }
 
+        /// <summary>
+        /// Add the character class rows into the database. Using CharaClass SQL Table 
+        /// </summary>
+        /// <param name="charaName">The name of the character</param>
         public void AddCharaRowsToDb(String charaName)
         {
             foreach(var d in m_classRow)
@@ -498,48 +514,69 @@ namespace DandDAdventures.XAML
             }
         }
 
+        /// <summary>
+        /// Add the Class 's' into the SQL Database if it does not yet exist
+        /// </summary>
+        /// <param name="s">The class to add</param>
         public void AddClassList(String s)
         {
             if (s == "")
                 return;
 
-            bool find = false;
-            foreach (String cl in ClassList)
+            //Look if we can find the class in the database. If found, exit
+            foreach(String cl in ClassList)
                 if (cl == s)
                 {
-                    find = true;
+                    return;
                 }
-            if(!find)
-            {
-                ClassList.Add(s);
-                OnPropertyChanged("ClassList");
-            }
-
+            ClassList.Add(s);
+            OnPropertyChanged("ClassList");
         }
 
+        /// <summary>
+        /// Function used to notify that a property (View property) has changed
+        /// </summary>
+        /// <param name="name">The property name</param>
         public void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+#endregion
 
+        ////////////////////////
+        ////PUBLIC PROPERTIES///
+        ////////////////////////
+#region
+
+        /// <summary>
+        /// Is the character added into the Database ?
+        /// </summary>
         public Boolean         CharacterAdded { get => m_characterAdded; }
-        public List<Character> NewCharacters { get => m_characters; }
-        public List<ClassRow>  ClassRows
-        {
-            get
-            {
-                return m_classRow;
-            }
 
-            set
-            {
-                m_classRow = value;
-                OnPropertyChanged("ClassRows");
-            }
-        }
+        /// <summary>
+        /// The list of the newly created character. For now, this list is empty or contain only one entry
+        /// </summary>
+        public List<Character> NewCharacters  { get => m_characters; }
 
-        public PJCaracteristics Caracteristics { get => m_caracteristics; set { m_caracteristics = value; OnPropertyChanged("Caracteristics");  } }
+        /// <summary>
+        /// The class rows for the in construction character
+        /// </summary>
+        public List<ClassRow>  ClassRows       { get => m_classRow;       set { m_classRow = value; OnPropertyChanged("ClassRows"); } }
+
+        /// <summary>
+        /// The character's caracteristics
+        /// </summary>
+        public PJCaracteristics Caracteristics { get => m_caracteristics; set { m_caracteristics = value; OnPropertyChanged("Caracteristics"); } }
+
+        /// <summary>
+        /// The ClassList available
+        /// </summary>
         public List<String> ClassList          { get => m_classList;      set { m_classList      = value; OnPropertyChanged("ClassList"); } }
+
+        /// <summary>
+        /// The IconPath associated with the in construction character
+        /// </summary>
         public String IconPath                 { get => m_iconPath;       set { m_iconPath       = value; OnPropertyChanged("IconPath"); m_iconDefined = true; } }
+#endregion
     }
 }
