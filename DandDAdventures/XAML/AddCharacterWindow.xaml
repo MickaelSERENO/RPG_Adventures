@@ -10,7 +10,8 @@
         x:Name="Window">
     <Grid>
         <Grid.Resources>
-            <local:StringToImageConverter x:Key="StringToImageConverter"/>
+            <local:StringToImageConverter       x:Key="StringToImageConverter"/>
+            <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -37,6 +38,7 @@
                     <sys:String x:Key="PlayerName">Nom du Joueur</sys:String>
                     <sys:String x:Key="Gender">Sexe</sys:String>
                     <sys:String x:Key="Alignment">Alignement</sys:String>
+                    <sys:String x:Key="Place">Place</sys:String>
                     <sys:String x:Key="Classe">Classe</sys:String>
                     <sys:String x:Key="Race">Race</sys:String>
                     <sys:String x:Key="Caracteristics">Caracteristiques</sys:String>
@@ -190,6 +192,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <Grid.Resources>
@@ -197,7 +200,20 @@
                                 <Setter Property="Margin" Value="5,0,0,5" />
                             </Style>
                         </Grid.Resources>
-                        <TextBlock Grid.Column="0" Grid.Row="0" Text="" Margin="0,0,0,5"/>
+                        
+                        <ToggleButton Margin="0,0,0,10" Name="PCToggle">
+                            <ToggleButton.Style>
+                                <Style TargetType="{x:Type ToggleButton}">
+                                    <Setter Property="Content" Value="PC" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter Property="Content" Value="NPC" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+
                         <TextBlock Grid.Column="0" Grid.Row="1" Text="{StaticResource Name}" VerticalAlignment="Top"/>
                         <TextBox   Grid.Column="1" Grid.Row="1" Name="NameEntry"/>
                         <TextBlock Grid.Column="0" Grid.Row="2" Text="{StaticResource PlayerName}" VerticalAlignment="Top"/>
@@ -206,6 +222,8 @@
                         <TextBox   Grid.Column="1" Grid.Row="3" Name="GenderEntry"/>
                         <TextBlock Grid.Column="0" Grid.Row="4" Text="{StaticResource Alignment}" VerticalAlignment="Top"/>
                         <TextBox   Grid.Column="1" Grid.Row="4" Name="AlignmentEntry"/>
+                        <TextBlock Grid.Column="0" Grid.Row="5" Text="{StaticResource Place}" VerticalAlignment="Top"/>
+                        <TextBox   Grid.Column="1" Grid.Row="5" Name="PlaceEntry"/>
                     </Grid>
                 </DockPanel>
                 
@@ -312,13 +330,19 @@
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" MinHeight="0"/>
+                    <RowDefinition Height="{Binding IsChecked, Source={x:Reference PCToggle}, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=grid}"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
                 <TextBlock Grid.Row="0" Text="{StaticResource Story}"/>
                 <TextBox Grid.Row="1" x:Name="StoryEntry" TextWrapping="Wrap" AcceptsReturn="True"/>
-                <local:FilePath Grid.Row="2" Margin="0,5,0,0" Description="{StaticResource FileDescription}"></local:FilePath>
+                <TextBlock Grid.Row="2" Text="Description" 
+                         Visibility="{Binding IsChecked, Source={x:Reference PCToggle}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <TextBox Grid.Row="3" x:Name="DescriptionEntry" TextWrapping="Wrap" AcceptsReturn="True" 
+                         Visibility="{Binding IsChecked, Source={x:Reference PCToggle}, Converter={StaticResource BooleanToVisibilityConverter}}"></TextBox>
+                <local:FilePath Grid.Row="4" Margin="0,5,0,0" Description="{StaticResource FileDescription}"></local:FilePath>
             </Grid>
         </DockPanel>
 

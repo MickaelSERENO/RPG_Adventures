@@ -104,6 +104,7 @@
     <Compile Include="XAML\AddPlaceWindow.xaml.cs">
       <DependentUpon>AddPlaceWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="XAML\Controls\BooleanToVisibilityConverter.cs" />
     <Compile Include="XAML\Controls\PlaceTabItemCtrl.xaml.cs">
       <DependentUpon>PlaceTabItemCtrl.xaml</DependentUpon>
     </Compile>
