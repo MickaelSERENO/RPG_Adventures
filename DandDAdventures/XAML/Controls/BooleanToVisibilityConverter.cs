@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace DandDAdventures.XAML.Controls
@@ -14,11 +10,11 @@ namespace DandDAdventures.XAML.Controls
     public class BooleanToVisibilityConverter : IValueConverter
     {
         /// <summary>
-        /// Convert function (implementation from IValueConverter
+        /// Convert function (implementation from IValueConverter).
         /// </summary>
         /// <param name="value">The value to convert. Must be convertable to bool</param>
         /// <param name="targetType">The type to convert to.</param>
-        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="parameter">The converter parameter to use. If parameter starts by "grid", we use the following chracter for true or "0" for false</param>
         /// <param name="culture">The culture to use in the converter.</param>
         /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -26,10 +22,10 @@ namespace DandDAdventures.XAML.Controls
             bool b = (bool)value;
             if(parameter != null)
             {
-                if(parameter as string == "grid")
+                if((parameter as string).StartsWith("grid"))
                 {
                     if(b)
-                        return "*";
+                        return (parameter as string).Substring(4);
                     return "0";
                 }
             }
@@ -38,6 +34,14 @@ namespace DandDAdventures.XAML.Controls
             return "Collapsed";
         }
 
+        /// <summary>
+        /// Convert back a Visibility value to a Boolean
+        /// </summary>
+        /// <param name="value">The value to convert. Must be convertable to bool</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use. If parameter starts by "grid", we use the following chracter for true or "0" for false</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A boolean based on the Visibility Value</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             String s = value as String;

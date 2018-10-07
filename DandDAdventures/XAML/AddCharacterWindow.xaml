@@ -332,7 +332,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto" MinHeight="0"/>
-                    <RowDefinition Height="{Binding IsChecked, Source={x:Reference PCToggle}, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=grid}"/>
+                    <RowDefinition Height="{Binding IsChecked, Source={x:Reference PCToggle}, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=grid*}"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
