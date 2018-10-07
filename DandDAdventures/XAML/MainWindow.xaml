@@ -11,13 +11,13 @@
         <!-- The Main Menu -->
         <Menu DockPanel.Dock="Top">
             <Menu.Resources>
-                <sys:String x:Key="File">_File</sys:String>
-                <sys:String x:Key="New">_New</sys:String>
-                <sys:String x:Key="Open">_Open</sys:String>
-                <sys:String x:Key="Save">_Save</sys:String>
+                <sys:String x:Key="File">_Fichier</sys:String>
+                <sys:String x:Key="New">_Nouveau</sys:String>
+                <sys:String x:Key="Open">_Ouvrir</sys:String>
+                <sys:String x:Key="Save">_Sauvegardé</sys:String>
 
-                <sys:String x:Key="Edit">Edit</sys:String>
-                <sys:String x:Key="SetPJ">Set PJ...</sys:String>
+                <sys:String x:Key="Edit">Edition</sys:String>
+                <sys:String x:Key="SetCharacter">Set Personnage...</sys:String>
                 <sys:String x:Key="SetPlace">Set Place...</sys:String>
             </Menu.Resources>
             <MenuItem Header="{StaticResource File}">
@@ -26,14 +26,14 @@
                 <MenuItem Header="{StaticResource Save}" Click="SaveFile" IsEnabled="{Binding CanSave}"/>
             </MenuItem>
             <MenuItem Header="{StaticResource Edit}">
-                <MenuItem Header="{StaticResource SetPJ}" Click="SetPJ"/>
+                <MenuItem Header="{StaticResource SetCharacter}" Click="SetCharacter"/>
                 <MenuItem Header="{StaticResource SetPlace}" Click="SetPlace"/>
             </MenuItem>
         </Menu>
         <Grid  Name="MainPanel">
             <Grid.Resources>
-                <sys:String x:Key="PJ">PJ</sys:String>
-                <sys:String x:Key="PNJ">PNJ</sys:String>
+                <sys:String x:Key="Character">Personnages</sys:String>
+                <sys:String x:Key="NPC">PNJ</sys:String>
                 <sys:String x:Key="Places">Places</sys:String>
                 <sys:String x:Key="Add">Ajouté</sys:String>
             </Grid.Resources>
@@ -49,8 +49,8 @@
             </ContentControl>
             <GridSplitter Grid.Column="2" HorizontalAlignment="Stretch" />
             <TabControl Grid.Column="3" x:Name="TabCtrl">
-                <TabItem TabIndex="0" Header="{StaticResource PJ}" Selector.Selected="PJTabItemSelected">
-                    <ContentControl Name="PJTabItem"/>
+                <TabItem TabIndex="0" Header="{StaticResource Character}" Selector.Selected="CharacterTabItemSelected">
+                    <ContentControl Name="CharacterTabItem"/>
                 </TabItem>
                 <TabItem TabIndex="1" Header="{StaticResource Places}" Selector.Selected="PlaceTabItemSelected">
                     <ContentControl Name="PlaceTabItem"/>

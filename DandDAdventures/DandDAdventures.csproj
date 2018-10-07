@@ -98,8 +98,8 @@
     </ApplicationDefinition>
     <Compile Include="Database\DBResource.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="XAML\AddPJWindow.xaml.cs">
-      <DependentUpon>AddPJWindow.xaml</DependentUpon>
+    <Compile Include="XAML\AddCharacterWindow.xaml.cs">
+      <DependentUpon>AddCharacterWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\AddPlaceWindow.xaml.cs">
       <DependentUpon>AddPlaceWindow.xaml</DependentUpon>
@@ -111,7 +111,7 @@
       <DependentUpon>PlaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\Controls\StringToImageConverter.cs" />
-    <Page Include="XAML\AddPJWindow.xaml">
+    <Page Include="XAML\AddCharacterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -119,11 +119,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XAML\Controls\PJView.xaml">
+    <Page Include="XAML\Controls\CharacterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XAML\Controls\PJTabItemCtrl.xaml">
+    <Page Include="XAML\Controls\CharacterTabItemCtrl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -143,7 +143,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XAML\EditPJ.xaml">
+    <Page Include="XAML\EditCharacter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -155,16 +155,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="XAML\Controls\PJView.xaml.cs">
-      <DependentUpon>PJView.xaml</DependentUpon>
+    <Compile Include="XAML\Controls\CharacterView.xaml.cs">
+      <DependentUpon>CharacterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Database\DBHandler.cs" />
-    <Compile Include="XAML\Controls\PJTabItemCtrl.xaml.cs">
-      <DependentUpon>PJTabItemCtrl.xaml</DependentUpon>
+    <Compile Include="XAML\Controls\CharacterTabItemCtrl.xaml.cs">
+      <DependentUpon>CharacterTabItemCtrl.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\Controls\FilePath.xaml.cs">
       <DependentUpon>FilePath.xaml</DependentUpon>
@@ -175,8 +175,8 @@
     <Compile Include="XAML\EditDate.xaml.cs">
       <DependentUpon>EditDate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\EditPJ.xaml.cs">
-      <DependentUpon>EditPJ.xaml</DependentUpon>
+    <Compile Include="XAML\EditCharacter.xaml.cs">
+      <DependentUpon>EditCharacter.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\EditPlace.xaml.cs">
       <DependentUpon>EditPlace.xaml</DependentUpon>

@@ -1,26 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DandDAdventures.XAML.Controls
 {  
     /// <summary>
     /// GroupEvent class for characters. Represent an event applied to a set of characters
     /// </summary>
-    public class PJGroupEvent
+    public class CharacterGroupEvent
     {
         /// <summary>
         /// ID of the Event displayed (application ID)
@@ -44,9 +37,9 @@ namespace DandDAdventures.XAML.Controls
     }
 
     /// <summary>
-    /// PJView.xaml Logique. Controls the Character view
+    /// CharacterView.xaml Logique. Controls the Character view
     /// </summary>
-    public partial class PJView : UserControl
+    public partial class CharacterView : UserControl
     {
         /// <summary>
         /// The summary text field
@@ -59,10 +52,10 @@ namespace DandDAdventures.XAML.Controls
         private WindowData m_wd;
 
         /// <summary>
-        /// Constructor. Initialize the PJView.
+        /// Constructor. Initialize the CharacterView.
         /// </summary>
         /// <param name="wd">The application data</param>
-        public PJView(WindowData wd)
+        public CharacterView(WindowData wd)
         {
             m_wd = wd;
             InitializeComponent();
@@ -80,16 +73,20 @@ namespace DandDAdventures.XAML.Controls
         /// <param name="ge">The groupevent to add</param>
         public void AddGroupEvent(GroupEvent ge)
         {
-            m_wd.PJDatas.AddGroupEvent(ge);
+            m_wd.CharacterDatas.AddGroupEvent(ge);
         }
 
+        /// <summary>
+        /// Set the current displayed groupEvent
+        /// </summary>
+        /// <param name="Name"></param>
         public void SetGroupEvent(String Name)
         {
-            m_wd.PJDatas.EventList.Clear();
+            m_wd.CharacterDatas.EventList.Clear();
             var list = m_wd.SQLDatabase.GetGroupEvents(Name);
 
             foreach (var ge in list)
-                m_wd.PJDatas.AddGroupEvent(ge);
+                m_wd.CharacterDatas.AddGroupEvent(ge);
         }
 
         /// <summary>
@@ -99,15 +96,24 @@ namespace DandDAdventures.XAML.Controls
         public void SetSummary(String s)
         {
             String[] listName = m_wd.SQLDatabase.GetListName();
-            Utils.SetTextLink(m_summaryVal, s, listName, (Style)FindResource("LinkStyle"), this.PlaceDown);
+            Utils.SetTextLink(m_summaryVal, s, listName, (Style)FindResource("LinkStyle"), this.LinkDown);
         }
 
+        /// <summary>
+        /// Set the displayed character icon
+        /// </summary>
+        /// <param name="icon">The icon to display</param>
         public void SetCharacterIcon(BitmapImage icon)
         {
-            m_wd.PJDatas.CharacterIcon = icon;
+            m_wd.CharacterDatas.CharacterIcon = icon;
         }
 
-        private void PlaceDown(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// Function called when a place or a character has been clicked on
+        /// </summary>
+        /// <param name="sender">The object calling this function</param>
+        /// <param name="e"></param>
+        private void LinkDown(object sender, MouseButtonEventArgs e)
         {
             Run r = sender as Run;
             m_wd.LinkName?.LinkToName(r.Text);
@@ -116,8 +122,8 @@ namespace DandDAdventures.XAML.Controls
         private void EventMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            PJGroupEvent ev = ((ListViewItem)sender).Content as PJGroupEvent;
-            PJGroupEvent edEvent = new PJGroupEvent { ID = ev.ID, GroupEventID = ev.GroupEventID, Description = ev.Description.Clone() as String, CharaList = ev.CharaList.Clone() as String };
+            CharacterGroupEvent ev = ((ListViewItem)sender).Content as CharacterGroupEvent;
+            CharacterGroupEvent edEvent = new CharacterGroupEvent { ID = ev.ID, GroupEventID = ev.GroupEventID, Description = ev.Description.Clone() as String, CharaList = ev.CharaList.Clone() as String };
 
             EditDate ed = new EditDate(m_wd, edEvent);
             ed.ShowDialog();
@@ -130,8 +136,8 @@ namespace DandDAdventures.XAML.Controls
 
                 ev.Description = edEvent.Description;
 
-                m_wd.PJDatas.CurrentDate = null;
-                m_wd.PJDatas.CurrentDate = ev;
+                m_wd.CharacterDatas.CurrentDate = null;
+                m_wd.CharacterDatas.CurrentDate = ev;
             }
         }
 
@@ -139,40 +145,40 @@ namespace DandDAdventures.XAML.Controls
         {
             TextBlock tb = FindName("EventDesc") as TextBlock;
 
-            if (m_wd.PJDatas.CurrentDate != null)
+            if (m_wd.CharacterDatas.CurrentDate != null)
             {
                 String[] listName = m_wd.SQLDatabase.GetListName();
 
-                Utils.SetTextLink(tb, m_wd.PJDatas.CurrentDate.Description, listName, (Style)FindResource("LinkStyle"), this.PlaceDown);
+                Utils.SetTextLink(tb, m_wd.CharacterDatas.CurrentDate.Description, listName, (Style)FindResource("LinkStyle"), this.LinkDown);
             }
             else
                 tb.Inlines.Clear();
         }
     }
 
-    public class PJDataContext : INotifyPropertyChanged
+    public class CharacterDataContext : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        protected ObservableCollection<PJGroupEvent> m_groupEvent;
+        protected ObservableCollection<CharacterGroupEvent> m_groupEvent;
         protected ObservableCollection<Character> m_listCharacters;
         protected Character m_characterSelected = null;
-        protected PJGroupEvent m_currentDate = null;
+        protected CharacterGroupEvent m_currentDate = null;
 
         private WindowData  m_wd;
         private BitmapImage m_characterIcon = null;
 
-        public PJDataContext(WindowData wd)
+        public CharacterDataContext(WindowData wd)
         {
             m_wd = wd;
             m_characterIcon  = StringToImageConverter.BitmapFromPath(System.AppDomain.CurrentDomain.BaseDirectory+"/Resources/DefaultCaracterIcon.png");
-            m_groupEvent     = new ObservableCollection<PJGroupEvent>();
+            m_groupEvent     = new ObservableCollection<CharacterGroupEvent>();
             m_listCharacters = new ObservableCollection<Character>();
         }
 
         public void AddGroupEvent(GroupEvent ge)
         {
             String charaList = String.Join(", ", m_wd.SQLDatabase.GetCharaNamesEvent(ge).ToArray());
-            m_groupEvent.Add(new PJGroupEvent { ID = m_groupEvent.Count+1, Description = ge.Description, GroupEventID = ge.ID, CharaList = charaList });
+            m_groupEvent.Add(new CharacterGroupEvent { ID = m_groupEvent.Count+1, Description = ge.Description, GroupEventID = ge.ID, CharaList = charaList });
         }
 
         public void Clean()
@@ -187,9 +193,9 @@ namespace DandDAdventures.XAML.Controls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public ObservableCollection<PJGroupEvent> EventList  { get => m_groupEvent; set { m_groupEvent = value; } }
+        public ObservableCollection<CharacterGroupEvent> EventList  { get => m_groupEvent; set { m_groupEvent = value; } }
         public ObservableCollection<Character> CharacterList { get => m_listCharacters; set { m_listCharacters = value; } }
-        public PJGroupEvent CurrentDate { get => m_currentDate; set { m_currentDate = value; OnPropertyChanged("CurrentDate"); } }
+        public CharacterGroupEvent CurrentDate { get => m_currentDate; set { m_currentDate = value; OnPropertyChanged("CurrentDate"); } }
 
         public Character CharacterSelected
         {

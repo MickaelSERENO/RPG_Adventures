@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace DandDAdventures.XAML.Listeners
 {
     /// <summary>
-    /// AddPJListener. This will create the AppPJWindow and modify the database when finishing (see OnFire)
+    /// AddCharacterListener. This will create the AppCharacterWindow and modify the database when finishing (see OnFire)
     /// </summary>
-    public class AddPJListener : IActionListener
+    public class AddCharacterListener : IActionListener
     {
         /// <summary>
         /// The Window data (application data)
@@ -22,24 +22,24 @@ namespace DandDAdventures.XAML.Listeners
         /// Constructor, initialize the object with the global data structure (application data)
         /// </summary>
         /// <param name="wd">The application data</param>
-        public AddPJListener(WindowData wd) : base()
+        public AddCharacterListener(WindowData wd) : base()
         {
             m_wd = wd;
         }
 
         /// <summary>
-        /// This function create the AddPJWindow and modify the database if needed (adding a character)
+        /// This function create the AddCharacterWindow and modify the database if needed (adding a character)
         /// </summary>
         public void OnFire()
         {
             //Show the window
-            var w = new AddPJWindow(m_wd);
+            var w = new AddCharacterWindow(m_wd);
             w.ShowDialog();
 
             //Commit the Dialog
             if(w.Datas.CharacterAdded)
             {
-                m_wd.CommitDB.AddPJ(w.Datas.NewCharacters.ToArray());
+                m_wd.CommitDB.AddCharacter(w.Datas.NewCharacters.ToArray());
 
                 //Add the icon as a new resources.
                 //TODO only one icon currently is added...
@@ -70,7 +70,7 @@ namespace DandDAdventures.XAML.Listeners
         }
 
         /// <summary>
-        /// This function create the AddPJWindow and modify the database if needed (adding a character)
+        /// This function create the AddCharacterWindow and modify the database if needed (adding a character)
         /// </summary>
         public void OnFire()
         {

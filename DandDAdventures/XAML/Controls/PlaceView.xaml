@@ -96,12 +96,12 @@
                         <DataGridComboBoxColumn Header="{StaticResource Owner}" SelectedValueBinding="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Name" DisplayMemberPath="Name">
                             <DataGridComboBoxColumn.ElementStyle>
                                 <Style TargetType="{x:Type ComboBox}">
-                                    <Setter Property="ComboBox.ItemsSource" Value="{Binding Path=DataContext.PJDatas.CharacterList, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                                    <Setter Property="ComboBox.ItemsSource" Value="{Binding Path=DataContext.CharacterDatas.CharacterList, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
                                 </Style>
                             </DataGridComboBoxColumn.ElementStyle>
                             <DataGridComboBoxColumn.EditingElementStyle>
                                 <Style TargetType="{x:Type ComboBox}">
-                                    <Setter Property="ComboBox.ItemsSource" Value="{Binding Path=DataContext.PJDatas.CharacterList, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                                    <Setter Property="ComboBox.ItemsSource" Value="{Binding Path=DataContext.CharacterDatas.CharacterList, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
                                 </Style>
                             </DataGridComboBoxColumn.EditingElementStyle>
                         </DataGridComboBoxColumn>

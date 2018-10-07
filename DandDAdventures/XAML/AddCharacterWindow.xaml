@@ -1,4 +1,4 @@
-﻿<Window x:Class="DandDAdventures.XAML.AddPJWindow"
+﻿<Window x:Class="DandDAdventures.XAML.AddCharacterWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DandDAdventures.XAML.Controls"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Ajouter PJ/PNJ" Height="500" Width="600"
+        Title="Ajoute de Personnage" Height="500" Width="600"
         x:Name="Window">
     <Grid>
         <Grid.Resources>
@@ -327,7 +327,7 @@
             <StackPanel.Resources>
                 <sys:String x:Key="Add">Ajouter</sys:String>
             </StackPanel.Resources>
-            <Button Name="AddPJ" HorizontalAlignment="Right" Click="AddPJClick">
+            <Button Name="AddCharacter" HorizontalAlignment="Right" Click="AddCharacterClick">
                 <TextBlock Text="{StaticResource Add}"/>
             </Button>
         </StackPanel>

@@ -7,9 +7,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using DandDAdventures.XAML;
 using System.Collections.Generic;
-using System.IO.Compression;
-using System.IO;
-using DandDAdventures.Database;
 
 namespace DandDAdventures
 {
@@ -383,7 +380,7 @@ namespace DandDAdventures
     /// </summary>
     public class DBHandler
     {
-        public static readonly int TYPE_PJ = 0;
+        public static readonly int TYPE_Character = 0;
 
         /// <summary>
         /// The Database Initial string in order to create all the tables
@@ -617,6 +614,11 @@ namespace DandDAdventures
             return true;
         }
 
+        /// <summary>
+        /// Add a SuperRace into the database
+        /// </summary>
+        /// <param name="name">The SuperRace name</param>
+        /// <returns>true on success, false in failure. TODO returns only true currently</returns>
         public bool AddSuperRace(String name)
         {
             SuperRace superRace = new SuperRace()
@@ -638,7 +640,12 @@ namespace DandDAdventures
             return true;
         }
 
-        public bool AddPJ(Character c)
+        /// <summary>
+        /// Add a character into the database
+        /// </summary>
+        /// <param name="c">The character to Add</param>
+        /// <returns>true on success, false in failure. TODO returns only true currently</returns>
+        public bool AddCharacter(Character c)
         {
             var d = from a in m_dbContext.Character
                     where a.Name == c.Name
@@ -647,7 +654,7 @@ namespace DandDAdventures
             foreach (var a in d)
                 return false;
 
-            c.Type = DBHandler.TYPE_PJ;
+            c.Type = DBHandler.TYPE_Character;
             m_dbContext.Character.Add(c);
 
             Commit();
@@ -655,6 +662,11 @@ namespace DandDAdventures
             return true;
         }
 
+        /// <summary>
+        /// Add a Character Class description (see CharaClass) into the database
+        /// </summary>
+        /// <param name="cc">The Character Class description</param>
+        /// <returns></returns>
         public bool AddCharaClass(CharaClass cc)
         {
             m_dbContext.CharaClass.Add(cc);
@@ -662,6 +674,12 @@ namespace DandDAdventures
             return true;
         }
 
+        /// <summary>
+        /// Add a new Data (Even) into the database
+        /// </summary>
+        /// <param name="desc">The description of the data</param>
+        /// <param name="chara">The List of characters concerned by this date</param>
+        /// <returns></returns>
         public GroupEvent AddDate(String desc, Character[] chara)
         {
             GroupEvent gp = new GroupEvent() { ID = 0, Description = desc };
@@ -676,12 +694,20 @@ namespace DandDAdventures
             return gp;
         }
 
+        /// <summary>
+        /// Add a place into the database
+        /// </summary>
+        /// <param name="place">The place to add</param>
         public void AddPlace(Place place)
         {
             m_dbContext.Place.Add(place);
             Commit();
         }
 
+        /// <summary>
+        /// Set a Place data into the database. This function looks into place.Name to determine which place he has to modified. He modifies the others fields
+        /// </summary>
+        /// <param name="place">The place containing the information to modify, except the name (the name is a key)</param>
         public void SetPlace(Place place)
         {
             m_dbContext.Place.Where(d => d.Name == place.Name).ToList().ForEach(d=> d.Story = place.Story);
@@ -871,6 +897,11 @@ namespace DandDAdventures
             return d;
         }
 
+        /// <summary>
+        /// Get the GroupEvents associated to a character
+        /// </summary>
+        /// <param name="name">The character name</param>
+        /// <returns>A Queryable object containing GroupEvents bind to the Character "name"</returns>
         public IQueryable<GroupEvent> GetGroupEvents(String name)
         {
             var d = from ge in m_dbContext.GroupEvent

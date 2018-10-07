@@ -11,7 +11,7 @@ using System.Windows.Media;
 namespace DandDAdventures.XAML
 {
     /// <summary>
-    /// Represent a row of class in the PJ Add Window (a.k.a class name and class level)
+    /// Represent a row of class in the Character Add Window (a.k.a class name and class level)
     /// </summary>
     public class ClassRow
     {
@@ -31,7 +31,7 @@ namespace DandDAdventures.XAML
     /// <summary>
     /// The Playable Character caracteristics (Str, Con, etc.)
     /// </summary>
-    public class PJCaracteristics
+    public class CharacterCaracteristics
     {
         /// <summary>
         /// Strength
@@ -65,9 +65,9 @@ namespace DandDAdventures.XAML
     }
 
     /// <summary>
-    /// Logique d'interaction pour AddPJWindow.xaml
+    /// Logique d'interaction pour AddCharacterWindow.xaml
     /// </summary>
-    public partial class AddPJWindow : Window
+    public partial class AddCharacterWindow : Window
     {
         ///////////////////////////////////
         ////////PROTECTED ATTRIBUTES///////
@@ -127,7 +127,7 @@ namespace DandDAdventures.XAML
         /// <summary>
         /// The data of this window
         /// </summary>
-        protected PJDataWindow m_pjWindowData;
+        protected CharacterDataWindow m_CharacterWindowData;
 
         /// <summary>
         /// The character image icon
@@ -139,10 +139,10 @@ namespace DandDAdventures.XAML
         /// Constructor. Get and initialize all the Widget components and internal states
         /// </summary>
         /// <param name="wd">The application data</param>
-        public AddPJWindow(WindowData wd)
+        public AddCharacterWindow(WindowData wd)
         {
-            m_pjWindowData   = new PJDataWindow(wd);
-            this.DataContext = m_pjWindowData;
+            m_CharacterWindowData   = new CharacterDataWindow(wd);
+            this.DataContext = m_CharacterWindowData;
 
             InitializeComponent();
 
@@ -195,21 +195,21 @@ namespace DandDAdventures.XAML
         ////////////////////////////////
 #region
         /// <summary>
-        /// Function called when the Add Button is pressed. Add the PJ into the database
+        /// Function called when the Add Button is pressed. Add the Character into the database
         /// </summary>
         /// <param name="sender">The sender of the action (Button)</param>
         /// <param name="e">The RoutedEventArgs associated with this click</param>
-        private void AddPJClick(object sender, RoutedEventArgs e)
+        private void AddCharacterClick(object sender, RoutedEventArgs e)
         {
             //TODO show where is a problem
-            if (m_pjWindowData.ClassRows.Count == 0 || m_raceCB.Text == "" || m_nameEntry.Text == "")
+            if (m_CharacterWindowData.ClassRows.Count == 0 || m_raceCB.Text == "" || m_nameEntry.Text == "")
                 return;
 
             var classVal = m_wd?.SQLDatabase.GetClasses();
             Class[] classArray = classVal.ToArray();
 
             //Look if the class entered has to be added into the database (not known class)
-            foreach (var c1 in m_pjWindowData.ClassRows)
+            foreach (var c1 in m_CharacterWindowData.ClassRows)
             {
                 bool add = true;
                 foreach (var c2 in classArray)
@@ -249,22 +249,22 @@ namespace DandDAdventures.XAML
                 m_wd.SQLDatabase.AddRace(raceSplitted[0], raceSplitted[1]);
 
             String iconResKey = null;
-            if(m_pjWindowData.IconDefined)
+            if(m_CharacterWindowData.IconDefined)
             {
                 iconResKey = m_nameEntry.Text + "_Icon";
                 m_wd.SQLDatabase.AddResource(iconResKey);
             }
 
             //Add the Character into the database
-            m_pjWindowData.AddPJ(new Character { Name = m_nameEntry.Text, PlayerName = m_playerNameEntry.Text, Sexe = m_charaGender.Text, 
+            m_CharacterWindowData.AddCharacter(new Character { Name = m_nameEntry.Text, PlayerName = m_playerNameEntry.Text, Sexe = m_charaGender.Text, 
                                                  Race = m_raceCB.Text.Split(new Char[] { '/' }).Last(), Alignment = m_charaAlignment.Text,
                                                  Story = StoryEntry.Text, Type = 0, Icon = iconResKey,
-                                                 Str  = m_pjWindowData.Caracteristics.Strength,     Con  = m_pjWindowData.Caracteristics.Constitution, Dex  = m_pjWindowData.Caracteristics.Dexterity,
-                                                 Int  = m_pjWindowData.Caracteristics.Intelligence, Wis  = m_pjWindowData.Caracteristics.Wisdom      , Cha  = m_pjWindowData.Caracteristics.Charisma
+                                                 Str  = m_CharacterWindowData.Caracteristics.Strength,     Con  = m_CharacterWindowData.Caracteristics.Constitution, Dex  = m_CharacterWindowData.Caracteristics.Dexterity,
+                                                 Int  = m_CharacterWindowData.Caracteristics.Intelligence, Wis  = m_CharacterWindowData.Caracteristics.Wisdom      , Cha  = m_CharacterWindowData.Caracteristics.Charisma
             });
 
             //Then Add the Character Classes (a.k.a association between a character and ALL its classes)
-            m_pjWindowData.AddCharaRowsToDb(m_nameEntry.Text);
+            m_CharacterWindowData.AddCharaRowsToDb(m_nameEntry.Text);
             m_characterImage.Source=null;
 
             //Close the window
@@ -328,26 +328,26 @@ namespace DandDAdventures.XAML
             switch(int.Parse((string)btn.Tag))
             {
                 case 0:
-                    m_pjWindowData.Caracteristics.Strength++;
+                    m_CharacterWindowData.Caracteristics.Strength++;
                     break;
                 case 1:
-                    m_pjWindowData.Caracteristics.Constitution++;
+                    m_CharacterWindowData.Caracteristics.Constitution++;
                     break;
                 case 2:
-                    m_pjWindowData.Caracteristics.Dexterity++;
+                    m_CharacterWindowData.Caracteristics.Dexterity++;
                     break;
                 case 3:
-                    m_pjWindowData.Caracteristics.Intelligence++;
+                    m_CharacterWindowData.Caracteristics.Intelligence++;
                     break;
                 case 4:
-                    m_pjWindowData.Caracteristics.Wisdom++;
+                    m_CharacterWindowData.Caracteristics.Wisdom++;
                     break;
                 case 5:
-                    m_pjWindowData.Caracteristics.Charisma++;
+                    m_CharacterWindowData.Caracteristics.Charisma++;
                     break;
             }
             
-            m_pjWindowData.OnPropertyChanged("Caracteristics");
+            m_CharacterWindowData.OnPropertyChanged("Caracteristics");
         }
 
         /// <summary>
@@ -362,32 +362,32 @@ namespace DandDAdventures.XAML
             switch(int.Parse((string)btn.Tag))
             {
                 case 0:
-                    m_pjWindowData.Caracteristics.Strength     = (m_pjWindowData.Caracteristics.Strength < 1 ? 
-                                                                  0 : m_pjWindowData.Caracteristics.Strength-1);
+                    m_CharacterWindowData.Caracteristics.Strength     = (m_CharacterWindowData.Caracteristics.Strength < 1 ? 
+                                                                  0 : m_CharacterWindowData.Caracteristics.Strength-1);
                     break;
                 case 1:
-                    m_pjWindowData.Caracteristics.Constitution = (m_pjWindowData.Caracteristics.Constitution < 1 ? 
-                                                                  0 : m_pjWindowData.Caracteristics.Constitution-1);
+                    m_CharacterWindowData.Caracteristics.Constitution = (m_CharacterWindowData.Caracteristics.Constitution < 1 ? 
+                                                                  0 : m_CharacterWindowData.Caracteristics.Constitution-1);
                     break;
                 case 2:
-                    m_pjWindowData.Caracteristics.Dexterity    = (m_pjWindowData.Caracteristics.Dexterity < 1 ?
-                                                                  0 : m_pjWindowData.Caracteristics.Dexterity-1);
+                    m_CharacterWindowData.Caracteristics.Dexterity    = (m_CharacterWindowData.Caracteristics.Dexterity < 1 ?
+                                                                  0 : m_CharacterWindowData.Caracteristics.Dexterity-1);
                     break;
                 case 3:
-                    m_pjWindowData.Caracteristics.Intelligence = (m_pjWindowData.Caracteristics.Intelligence < 1 ? 
-                                                                  0 : m_pjWindowData.Caracteristics.Intelligence-1);
+                    m_CharacterWindowData.Caracteristics.Intelligence = (m_CharacterWindowData.Caracteristics.Intelligence < 1 ? 
+                                                                  0 : m_CharacterWindowData.Caracteristics.Intelligence-1);
                     break;
                 case 4:
-                    m_pjWindowData.Caracteristics.Wisdom       = (m_pjWindowData.Caracteristics.Wisdom < 1 ? 
-                                                                  0 : m_pjWindowData.Caracteristics.Wisdom-1);
+                    m_CharacterWindowData.Caracteristics.Wisdom       = (m_CharacterWindowData.Caracteristics.Wisdom < 1 ? 
+                                                                  0 : m_CharacterWindowData.Caracteristics.Wisdom-1);
                     break;
                 case 5:
-                    m_pjWindowData.Caracteristics.Charisma     = (m_pjWindowData.Caracteristics.Charisma < 1 ? 
-                                                                  0 : m_pjWindowData.Caracteristics.Charisma-1);
+                    m_CharacterWindowData.Caracteristics.Charisma     = (m_CharacterWindowData.Caracteristics.Charisma < 1 ? 
+                                                                  0 : m_CharacterWindowData.Caracteristics.Charisma-1);
                     break;
             }
 
-            m_pjWindowData.OnPropertyChanged("Caracteristics");
+            m_CharacterWindowData.OnPropertyChanged("Caracteristics");
         }
 
         /// <summary>
@@ -410,7 +410,7 @@ namespace DandDAdventures.XAML
         private void ClassNameLostFocus(object sender, RoutedEventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
-            m_pjWindowData.AddClassList(cb.Text);
+            m_CharacterWindowData.AddClassList(cb.Text);
         }
 
         /// <summary>
@@ -432,13 +432,13 @@ namespace DandDAdventures.XAML
         /// <summary>
         /// The Internal data associated with this Window accessible via the XAML
         /// </summary>
-        public PJDataWindow Datas { get => m_pjWindowData; }
+        public CharacterDataWindow Datas { get => m_CharacterWindowData; }
     }
 
     /// <summary>
-    /// The internal data of the PJWindow
+    /// The internal data of the CharacterWindow
     /// </summary>
-    public class PJDataWindow : INotifyPropertyChanged
+    public class CharacterDataWindow : INotifyPropertyChanged
     {
         ////////////////////////
         ///PRIVATE ATTRIBUTES///  
@@ -470,9 +470,9 @@ namespace DandDAdventures.XAML
         protected List<Character>  m_characters;
 
         /// <summary>
-        /// Caracteristics of the character (see PJCaracteristics)
+        /// Caracteristics of the character (see CharacterCaracteristics)
         /// </summary>
-        protected PJCaracteristics m_caracteristics;
+        protected CharacterCaracteristics m_caracteristics;
 
         /// <summary>
         /// The path of the in-progress character's icon
@@ -494,13 +494,13 @@ namespace DandDAdventures.XAML
         /// The Constructor. Initialize the object based on the Application Data (WindowData)
         /// </summary>
         /// <param name="wd">The Application Data</param>
-        public PJDataWindow(WindowData wd)
+        public CharacterDataWindow(WindowData wd)
         {
             m_wd = wd;
             m_characters     = new List<Character>();
             m_classRow       = new List<ClassRow>();
             m_classList      = new List<String>();
-            m_caracteristics = new PJCaracteristics();
+            m_caracteristics = new CharacterCaracteristics();
 
             //Initialize the Icon values
             m_iconPath    = System.AppDomain.CurrentDomain.BaseDirectory+"/Resources/DefaultCaracterIcon.png";
@@ -530,12 +530,12 @@ namespace DandDAdventures.XAML
         }
 
         /// <summary>
-        /// Add a PJ into the Database.
+        /// Add a Character into the Database.
         /// </summary>
         /// <param name="chara">The character to add</param>
-        public void AddPJ(Character chara)
+        public void AddCharacter(Character chara)
         {
-            m_wd.SQLDatabase?.AddPJ(chara);
+            m_wd.SQLDatabase?.AddCharacter(chara);
             m_characters.Add(chara);
             m_characterAdded = true;
         }
@@ -605,7 +605,7 @@ namespace DandDAdventures.XAML
         /// <summary>
         /// The character's caracteristics
         /// </summary>
-        public PJCaracteristics Caracteristics { get => m_caracteristics; set { m_caracteristics = value; OnPropertyChanged("Caracteristics"); } }
+        public CharacterCaracteristics Caracteristics { get => m_caracteristics; set { m_caracteristics = value; OnPropertyChanged("Caracteristics"); } }
 
         /// <summary>
         /// The ClassList available

@@ -37,9 +37,9 @@ namespace DandDAdventures.XAML
         protected ContentControl m_mainControl;
 
         /// <summary>
-        /// The Content of the PJ Tab Control (right part of the UI)
+        /// The Content of the Character Tab Control (right part of the UI)
         /// </summary>
-        protected ContentControl m_pjTabControl;
+        protected ContentControl m_CharacterTabControl;
 
         /// <summary>
         /// The Content of the PNJ Tab Control (
@@ -52,15 +52,15 @@ namespace DandDAdventures.XAML
         protected ContentControl m_placeTabControl;
 
         //The Main Views
-        protected PJView         m_pjView;
+        protected CharacterView         m_CharacterView;
         protected PlaceView      m_placeView;
 
         //The TabItem Views
-        protected PJTabItemCtrl    m_pjTabItem;
+        protected CharacterTabItemCtrl    m_CharacterTabItem;
         protected PlaceTabItemCtrl m_placeTabItem;
 
         //The AddListeners
-        protected AddPJListener    m_addPJListener;
+        protected AddCharacterListener    m_addCharacterListener;
         protected AddPlaceListener m_addPlaceListener;
 
         /// <summary>
@@ -77,30 +77,30 @@ namespace DandDAdventures.XAML
             m_mainPanel.Visibility = Visibility.Hidden;
 
             //Get and initialize the values for the MainControl View
-            m_pjView      = new PJView(m_windowData);
+            m_CharacterView      = new CharacterView(m_windowData);
             m_placeView   = new PlaceView(m_windowData);
             m_mainControl = (ContentControl)this.FindName("MainControl");
 
             //Initialize the Listeners
-            m_addPJListener    = new AddPJListener(m_windowData);
+            m_addCharacterListener    = new AddCharacterListener(m_windowData);
             m_addPlaceListener = new AddPlaceListener(m_windowData);
 
             //Get and initialize the TabControl 
-            m_pjTabControl    = (ContentControl)this.FindName("PJTabItem");
+            m_CharacterTabControl    = (ContentControl)this.FindName("CharacterTabItem");
             m_pnjTabControl   = (ContentControl)this.FindName("PNJTabItem");
             m_placeTabControl = (ContentControl)this.FindName("PlaceTabItem");
 
-            m_pjTabItem       = new PJTabItemCtrl(m_windowData);
+            m_CharacterTabItem       = new CharacterTabItemCtrl(m_windowData);
             m_placeTabItem    = new PlaceTabItemCtrl(m_windowData);
 
-            m_pjTabControl.Content    = m_pjTabItem;
+            m_CharacterTabControl.Content    = m_CharacterTabItem;
             m_placeTabControl.Content = m_placeTabItem;
 
-            m_pjTabItem.SetAddListener(m_addPJListener);
+            m_CharacterTabItem.SetAddListener(m_addCharacterListener);
             m_placeTabItem.SetAddListener(m_addPlaceListener);
 
             //Launch the Window
-            SetToPJMainView();
+            SetToCharacterMainView();
         }
 
         /// <summary>
@@ -116,13 +116,13 @@ namespace DandDAdventures.XAML
         }
 
         /// <summary>
-        /// Set the main view to the PJ Tab View
+        /// Set the main view to the Character Tab View
         /// </summary>
-        private void SetToPJMainView()
+        private void SetToCharacterMainView()
         {
-            m_mainControl.Content = m_pjView;
+            m_mainControl.Content = m_CharacterView;
             TabControl tabCtrl = FindName("TabCtrl") as TabControl;
-            tabCtrl.SelectedIndex = ((TabItem)(m_pjTabControl.Parent)).TabIndex;
+            tabCtrl.SelectedIndex = ((TabItem)(m_CharacterTabControl.Parent)).TabIndex;
         }
 
         /// <summary>
@@ -202,8 +202,8 @@ namespace DandDAdventures.XAML
                 File.Delete(tempDB);
 
                 //Load the content in the FrontEnd
-                m_pjTabItem.LoadContent(m_windowData);
-                m_pjView.LoadContent(m_windowData);
+                m_CharacterTabItem.LoadContent(m_windowData);
+                m_CharacterView.LoadContent(m_windowData);
 
                 m_placeTabItem.LoadContent(m_windowData);
                 m_placeView.LoadContent(m_windowData);
@@ -276,7 +276,7 @@ namespace DandDAdventures.XAML
             }
         }
 
-        private void SetPJ(object sender, RoutedEventArgs e)
+        private void SetCharacter(object sender, RoutedEventArgs e)
         {
             
         }
@@ -290,11 +290,11 @@ namespace DandDAdventures.XAML
         /// Add characters into the application memory
         /// </summary>
         /// <param name="charas"></param>
-        public void AddPJ(Character[] charas)
+        public void AddCharacter(Character[] charas)
         {
             foreach(var chara in charas)
             {
-                m_windowData.PJDatas.CharacterList.Add(chara);
+                m_windowData.CharacterDatas.CharacterList.Add(chara);
             }
         }
 
@@ -307,14 +307,14 @@ namespace DandDAdventures.XAML
             m_windowData.PlaceDatas.PlaceList.Add(p);
         }
         
-        public void OnSelectPJ(Character[] chara)
+        public void OnSelectCharacter(Character[] chara)
         {
             if(chara.Length == 1)
             {
-                m_windowData.CurrentPJ = chara[0].Name;
+                m_windowData.CurrentCharacter = chara[0].Name;
 
-                m_pjView.SetSummary(chara[0].Story);
-                m_pjView.SetGroupEvent(chara[0].Name);
+                m_CharacterView.SetSummary(chara[0].Story);
+                m_CharacterView.SetGroupEvent(chara[0].Name);
 
                 if(chara[0].Icon != null)
                 {
@@ -325,7 +325,7 @@ namespace DandDAdventures.XAML
                         img.BeginInit();
                         img.StreamSource = new MemoryStream(res.Data);
                         img.EndInit();
-                        m_pjView.SetCharacterIcon(img);
+                        m_CharacterView.SetCharacterIcon(img);
                     }
                 }
             }
@@ -369,13 +369,13 @@ namespace DandDAdventures.XAML
         public void AddDate(CreateDate cd, Character[] chara)
         {
             GroupEvent ge = m_windowData.SQLDatabase.AddDate(cd.Description, chara);
-            m_pjView.AddGroupEvent(ge);
+            m_CharacterView.AddGroupEvent(ge);
 
         }
 
-        private void PJTabItemSelected(object sender, RoutedEventArgs e)
+        private void CharacterTabItemSelected(object sender, RoutedEventArgs e)
         {
-            SetToPJMainView();
+            SetToCharacterMainView();
         }
 
         private void PlaceTabItemSelected(object sender, RoutedEventArgs e)
@@ -403,15 +403,15 @@ namespace DandDAdventures.XAML
 
             else
             {
-                foreach(Character c in m_windowData.PJDatas.CharacterList)
+                foreach(Character c in m_windowData.CharacterDatas.CharacterList)
                 {
                     if(c.Name == name)
                     {
-                        m_windowData.PJDatas.CharacterSelected = c;
+                        m_windowData.CharacterDatas.CharacterSelected = c;
                         break;
                     }
                 }
-                SetToPJMainView();
+                SetToCharacterMainView();
             }
         }
     }
@@ -442,9 +442,9 @@ namespace DandDAdventures.XAML
         protected String m_sqlPath   = null;
 
         /// <summary>
-        /// The name of the current PJ selected
+        /// The name of the current Character selected
         /// </summary>
-        protected String m_currentPJ = "";
+        protected String m_currentCharacter = "";
 
         /// <summary>
         /// The database handler
@@ -469,9 +469,9 @@ namespace DandDAdventures.XAML
         protected ISelectedTree   m_selectedTree;
 
         /// <summary>
-        /// The DataContext of the PJView.xaml
+        /// The DataContext of the CharacterView.xaml
         /// </summary>
-        protected PJDataContext    m_pjDatas;
+        protected CharacterDataContext    m_CharacterDatas;
 
         /// <summary>
         /// The DataContext of the PlaceView.xaml
@@ -515,7 +515,7 @@ namespace DandDAdventures.XAML
             m_selectedTree    = selectedTree;
             m_newResources    = new Dictionary<String, DBResource>();
             m_loadedResources = new Dictionary<String, DBResource>();
-            m_pjDatas         = new PJDataContext(this);
+            m_CharacterDatas         = new CharacterDataContext(this);
             m_placeDatas      = new PlaceDataContext(this);
         }
 
@@ -525,10 +525,10 @@ namespace DandDAdventures.XAML
         public void Clean()
         {
             CanSave = false;
-            CurrentPJ = null;
+            CurrentCharacter = null;
             m_sqlPath = null;
 
-            m_pjDatas.Clean();
+            m_CharacterDatas.Clean();
             m_placeDatas.Clean();
         }
 
@@ -638,20 +638,20 @@ namespace DandDAdventures.XAML
         /// <summary>
         /// What is the current player selected ?
         /// </summary>
-        public String CurrentPJ
+        public String CurrentCharacter
         {
-            get => m_currentPJ;
+            get => m_currentCharacter;
             set
             {
-                m_currentPJ = value;
-                OnPropertyChanged("CurrentPJ");
+                m_currentCharacter = value;
+                OnPropertyChanged("CurrentCharacter");
             }
         }
 
         /// <summary>
         /// The players data context
         /// </summary>
-        public PJDataContext    PJDatas    { get => m_pjDatas; }
+        public CharacterDataContext    CharacterDatas    { get => m_CharacterDatas; }
 
         /// <summary>
         /// The place data context

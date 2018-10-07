@@ -8,7 +8,7 @@ namespace DandDAdventures.XAML.Listeners
 {
     public interface ICommitDatabase
     {
-        void AddPJ(Character[] charas);
+        void AddCharacter(Character[] charas);
         void AddPlace(Place p);
     }
 }

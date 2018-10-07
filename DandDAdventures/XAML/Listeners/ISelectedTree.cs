@@ -12,7 +12,7 @@ namespace DandDAdventures.XAML.Listeners
         /// Change the UI when characters are selected
         /// </summary>
         /// <param name="chara">List of selected characters</param>
-        void OnSelectPJ(Character[] chara);
+        void OnSelectCharacter(Character[] chara);
 
         /// <summary>
         /// Add a date associated with multiple characters

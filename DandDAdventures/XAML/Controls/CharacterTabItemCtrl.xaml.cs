@@ -19,7 +19,7 @@ namespace DandDAdventures.XAML.Controls
     /// <summary>
     /// Interaction Logic for TabItem.xaml
     /// </summary>
-    public partial class PJTabItemCtrl : UserControl
+    public partial class CharacterTabItemCtrl : UserControl
     {
         /// <summary>
         /// The Application data
@@ -30,7 +30,7 @@ namespace DandDAdventures.XAML.Controls
 
         private ListView m_listView = null;
 
-        public PJTabItemCtrl(WindowData wd) : base()
+        public CharacterTabItemCtrl(WindowData wd) : base()
         {
             InitializeComponent();
             m_wd = wd;
@@ -46,7 +46,7 @@ namespace DandDAdventures.XAML.Controls
         {
             var charas = datas.SQLDatabase.GetCharacters();
             foreach (var c in charas)
-                datas.PJDatas.CharacterList.Add(c);
+                datas.CharacterDatas.CharacterList.Add(c);
         }
 
         private void AddClick(object sender, RoutedEventArgs e)
@@ -57,7 +57,7 @@ namespace DandDAdventures.XAML.Controls
         private void MainListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListView l = (ListView)sender;
-            m_wd.SelectedTree?.OnSelectPJ(l.SelectedItems.Cast<Character>().ToArray());
+            m_wd.SelectedTree?.OnSelectCharacter(l.SelectedItems.Cast<Character>().ToArray());
         }
 
         //For right click avoidance
@@ -80,10 +80,10 @@ namespace DandDAdventures.XAML.Controls
         {
             e.Handled = true;
             Character chara = ((ListViewItem)sender).Content as Character;
-            EditPJ ep = new EditPJ(m_wd, chara);
+            EditCharacter ep = new EditCharacter(m_wd, chara);
             ep.ShowDialog();
-            m_wd.PJDatas.CharacterSelected = null;
-            m_wd.PJDatas.CharacterSelected = chara;
+            m_wd.CharacterDatas.CharacterSelected = null;
+            m_wd.CharacterDatas.CharacterSelected = chara;
         }
 
         //Menu handlers

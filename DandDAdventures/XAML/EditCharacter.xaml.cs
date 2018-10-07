@@ -16,21 +16,21 @@ using System.Windows.Shapes;
 namespace DandDAdventures.XAML
 {
     /// <summary>
-    /// Logique d'interaction pour EditPJ.xaml
+    /// Logique d'interaction pour EditCharacter.xaml
     /// </summary>
-    public partial class EditPJ : Window
+    public partial class EditCharacter : Window
     {
         WindowData m_wd;
-        public EditPJ(WindowData wd, Character chara)
+        public EditCharacter(WindowData wd, Character chara)
         {
             m_wd = wd;
-            DataContext = new EditPJDatas(wd, chara);
+            DataContext = new EditCharacterDatas(wd, chara);
             InitializeComponent();
         }
 
         private void OKClick(object sender, RoutedEventArgs e)
         {
-            EditPJDatas datas = DataContext as EditPJDatas;
+            EditCharacterDatas datas = DataContext as EditCharacterDatas;
             m_wd.SQLDatabase.SetChara(datas.Chara);
             Close();
         }
@@ -41,14 +41,14 @@ namespace DandDAdventures.XAML
         }
     }
 
-    public class EditPJDatas : INotifyPropertyChanged
+    public class EditCharacterDatas : INotifyPropertyChanged
     {
         protected WindowData m_wd;
         protected Character  m_chara;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EditPJDatas(WindowData wd, Character chara)
+        public EditCharacterDatas(WindowData wd, Character chara)
         {
             m_chara = chara;
             m_wd    = wd;

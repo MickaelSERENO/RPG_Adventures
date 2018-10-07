@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DandDAdventures.XAML.Controls.PJTabItemCtrl"
+﻿<UserControl x:Class="DandDAdventures.XAML.Controls.CharacterTabItemCtrl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,7 +8,7 @@
              xmlns:local="clr-namespace:DandDAdventures.XAML.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             x:Name="PjTabItem">
+             x:Name="CharacterTabItem">
     <DockPanel>
         <DockPanel.Resources>
             <sys:String x:Key="CreateDateStr">New Date</sys:String>
@@ -20,7 +20,7 @@
         </Button>
         <ListView MouseDown="MainListViewMouseDown" Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
                   Name="MainListView" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SelectionMode="Extended" SelectionChanged="MainListViewSelectionChanged" 
-                  ItemsSource="{Binding Path=PJDatas.CharacterList}" SelectedItem="{Binding Path=PJDatas.CharacterSelected, Mode=TwoWay}">
+                  ItemsSource="{Binding Path=CharacterDatas.CharacterList}" SelectedItem="{Binding Path=CharacterDatas.CharacterSelected, Mode=TwoWay}">
             <ListView.Resources>
                 <DataTemplate DataType="{x:Type self:Character}">
                     <StackPanel Orientation="Horizontal">

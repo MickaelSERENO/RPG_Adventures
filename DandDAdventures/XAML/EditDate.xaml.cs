@@ -17,12 +17,12 @@ using System.Windows.Shapes;
 namespace DandDAdventures.XAML
 {
     /// <summary>
-    /// Logique d'interaction pour EditPJ.xaml
+    /// Logique d'interaction pour EditCharacter.xaml
     /// </summary>
     public partial class EditDate : Window
     {
         WindowData m_wd;
-        public EditDate(WindowData wd, PJGroupEvent ev)
+        public EditDate(WindowData wd, CharacterGroupEvent ev)
         {
             m_wd = wd;
             DataContext = new EditDateDatas(wd, ev);
@@ -48,11 +48,11 @@ namespace DandDAdventures.XAML
     public class EditDateDatas : INotifyPropertyChanged
     {
         protected WindowData m_wd;
-        protected PJGroupEvent m_event;
+        protected CharacterGroupEvent m_event;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EditDateDatas(WindowData wd, PJGroupEvent ev)
+        public EditDateDatas(WindowData wd, CharacterGroupEvent ev)
         {
             m_event = ev;
             m_wd = wd;
@@ -64,6 +64,6 @@ namespace DandDAdventures.XAML
         }
 
         public Boolean Valid { get; set; }
-        public PJGroupEvent Event{ get => m_event; set => m_event = value; }
+        public CharacterGroupEvent Event{ get => m_event; set => m_event = value; }
     }
 }
