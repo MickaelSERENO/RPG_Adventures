@@ -7,6 +7,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using DandDAdventures.XAML;
 using System.Collections.Generic;
+using System.IO.Compression;
+using System.IO;
+using DandDAdventures.Database;
 
 namespace DandDAdventures
 {
@@ -14,7 +17,20 @@ namespace DandDAdventures
     /////////////////////////////////////////////////////
     //Database class, i.e sql class tables (Using Linq)//
     /////////////////////////////////////////////////////
-    #region
+#region
+
+    /// <summary>
+    /// The resources used by this application
+    /// </summary>
+    [Table("Resource")]
+    public class Resource
+    {
+        /// <summary>
+        /// The Key of this resources (in the Zip file)
+        /// </summary>
+        [Key]
+        public String Key { get; set; }
+    }
 
     /// <summary>
     /// The Place SQL Table
@@ -105,71 +121,189 @@ namespace DandDAdventures
         public String CharaName { get; set; }
     }
 
+    /// <summary>
+    /// Class SQL Table representing the created classes for the characters
+    /// </summary>
     [Table("Class")]
     public class Class
     {
+        /// <summary>
+        /// Class name
+        /// </summary>
         [Key]
         public String Name { get; set; }
     }
 
+    /// <summary>
+    /// Super race SQL Table representing the super races used by the characters
+    /// </summary>
     [Table("SuperRace")]
     public class SuperRace
     {
+        /// <summary>
+        /// The SuperRace name
+        /// </summary>
         [Key]
         public String Name { get; set; }
     }
 
+    /// <summary>
+    /// Race SQL Table representing the races used by the characters. A Race may have or be a SuperRace
+    /// </summary>
     [Table("Race")]
     public class Race
     {
+        /// <summary>
+        /// The Race name
+        /// </summary>
         [Key]
         public String Name      { get; set; }
+
+        /// <summary>
+        /// The SuperRace name which this Race inherits from. null if no SuperRace
+        /// </summary>
         public String SuperName { get; set; }
     }
 
+    /// <summary>
+    /// The Character SQL Table representing the created characters
+    /// </summary>
     [Table("Character")]
     public class Character
     {
+        /// <summary>
+        /// Name of the Character
+        /// </summary>
         [Key]
         public String  Name  { get; set; }
+
+        /// <summary>
+        /// The name of the player playing this character
+        /// </summary>
+        public String PlayerName { get; set; }
+
+        /// <summary>
+        /// The Sexe of the character
+        /// </summary>
+        public String Sexe { get; set; }
+
+        /// <summary>
+        /// The alignment of the character
+        /// </summary>
+        public String Alignment { get; set; }
+
+        /// <summary>
+        /// Race of the Character (See Race SQL Table)
+        /// </summary>
         public String  Race  { get; set; }
+
+        /// <summary>
+        /// The Story of this Character
+        /// </summary>
         public String  Story { get; set; }
+
+        /// <summary>
+        /// The Key of the Icon resources of this Character
+        /// </summary>
+        public String  Icon  { get; set; }
+
+        /// <summary>
+        /// The Type of this character. 0 = PC, 1 = NPC
+        /// </summary>
         public Int32   Type  { get; set; }
+
+        /// <summary>
+        /// The Strength of this character
+        /// </summary>
         public Int32   Str   { get; set; }
+
+        /// <summary>
+        /// The Constitution of this character
+        /// </summary>
         public Int32   Con   { get; set; }
+
+        /// <summary>
+        /// The Dexterity of this character
+        /// </summary>
         public Int32   Dex   { get; set; }
+
+        /// <summary>
+        /// The Intelligence of this character
+        /// </summary>
         public Int32   Int   { get; set; }
+
+        /// <summary>
+        /// The Wisdom of this character
+        /// </summary>
         public Int32   Wis   { get; set; }
+
+        /// <summary>
+        /// The Charisma of this character
+        /// </summary>
         public Int32   Cha   { get; set; }
     }
 
+    /// <summary>
+    /// SQL Table representing the associated class description (name + level) for a given character
+    /// </summary>
     [Table("CharaClass")]
     public class CharaClass
     {
+        /// <summary>
+        /// The character name
+        /// </summary>
         [Key, Column(Order=0)]
         public String  CharaName { get; set; }
+
+        /// <summary>
+        /// The Class name
+        /// </summary>
         [Key, Column(Order=1)]
         public String  ClassName { get; set; }
-        public decimal Level     { get; set; }
+
+        /// <summary>
+        /// The level associated
+        /// </summary>
+        public int     Level     { get; set; }
     }
 
+    /// <summary>
+    /// GroupEvent SQL Table representing an event which has happened to a set of characters
+    /// </summary>
     [Table("GroupEvent")]
     public class GroupEvent
     {
+        /// <summary>
+        /// The Event ID
+        /// </summary>
         [Key]
         public int    ID          { get; set; }
+
+        /// <summary>
+        /// The Event Description
+        /// </summary>
         public String Description { get; set; }
     }
 
+    /// <summary>
+    /// SQL Table representing a binding between characters and GroupEvent SQL Table.
+    /// </summary>
     [Table("GroupBinding")]
     public class GroupBinding
     {
+        /// <summary>
+        /// The GroupEvent ID
+        /// </summary>
         [Key, Column(Order = 1)]
         public int GroupID { get; set; }
+
+        /// <summary>
+        /// The Character Name
+        /// </summary>
         [Key, Column(Order = 2)]
         public String Name { get; set; }
     }
-    #endregion
+#endregion
     
     /// <summary>
     /// DBContext class (see linq). Contain object matching the content of the SQLite database (via DbSet)
@@ -184,98 +318,171 @@ namespace DandDAdventures
         { }
 
         /// <summary>
-        /// List of places
+        /// The Resources known by the application. See Resource class
         /// </summary>
+        public DbSet<Resource>      Resource      { get; set; }
+
+        /// <summary>
+        /// List of places. See "Place" class
+        /// </summary> 
         public DbSet<Place>         Place         { get; set; }
 
         /// <summary>
-        /// List of treasures
+        /// List of treasures. See Treasure class
         /// </summary>
         public DbSet<Treasure>      Treasures     { get; set; }
+
+        /// <summary>
+        /// Which character possesses a given treasure ? See TreasureChara class
+        /// </summary>
         public DbSet<TreasureChara> TreasureChara { get; set; }
+
+        /// <summary>
+        /// What is the treasure value ? See TreasureValue class
+        /// </summary>
         public DbSet<TreasureValue> TreasureValue { get; set; }
+
+        /// <summary>
+        /// The Super Races. See SuperRace class
+        /// </summary>
         public DbSet<SuperRace>     SuperRace     { get; set; }
+
+        /// <summary>
+        /// The Races. See Race class
+        /// </summary>
         public DbSet<Race>          Race          { get; set; }
+
+        /// <summary>
+        /// The Class available. See Class class
+        /// </summary>
         public DbSet<Class>         Class         { get; set; }
+
+        /// <summary>
+        /// The characters available. see Character class
+        /// </summary>
         public DbSet<Character>     Character     { get; set; }
+
+        /// <summary>
+        /// The chartacter class description. See CharaClass
+        /// </summary>
         public DbSet<CharaClass>    CharaClass    { get; set; }
+
+        /// <summary>
+        /// The groupevent created. See GroupEvent class
+        /// </summary>
         public DbSet<GroupEvent>    GroupEvent    { get; set; }
+
+        /// <summary>
+        /// The binding between characters and GroupEvent. See GroupBinding class
+        /// </summary>
         public DbSet<GroupBinding>  GroupBinding  { get; set; }
     }
 
+    /// <summary>
+    /// DBHandler class. Interact with the SQLite Database to get, set and add values into it
+    /// </summary>
     public class DBHandler
     {
         public static readonly int TYPE_PJ = 0;
 
-        static String DB_INIT = @"CREATE TABLE PLACE(
-                                    NAME  VARCHAR(48) PRIMARY KEY,
-                                    STORY TEXT);
+        /// <summary>
+        /// The Database Initial string in order to create all the tables
+        /// </summary>
+        static String DB_INIT =
+#region
+            @"CREATE TABLE RESOURCE(
+                KEY TEXT PRIMARY KEY);
 
-                                  CREATE TABLE TREASURE(
-                                    ID        INTEGER PRIMARY KEY AUTOINCREMENT,
-                                    PLACENAME VARCHAR(48),
-                                    OPENED    BOOLEAN,
-                                    FOREIGN KEY(PLACENAME) REFERENCES PLACE(NAME));
+              CREATE TABLE PLACE(
+                NAME  VARCHAR(48) PRIMARY KEY,
+                STORY TEXT);
 
-                                  CREATE TABLE TREASURECHARA(
-                                    IDTR      INTEGER,
-                                    CHARANAME VARCHAR(48),
-                                    PRIMARY KEY(IDTR, CHARANAME));
+              CREATE TABLE TREASURE(
+                ID        INTEGER PRIMARY KEY AUTOINCREMENT,
+                PLACENAME VARCHAR(48),
+                OPENED    BOOLEAN,
+                FOREIGN KEY(PLACENAME) REFERENCES PLACE(NAME));
 
-                                  CREATE TABLE TREASUREVALUE(
-                                    ID      INTEGER PRIMARY KEY AUTOINCREMENT,
-                                    IDTR    INTEGER,
-                                    OBJNAME VARCHAR(48),
-                                    VALUE   INTEGER,
-                                    FOREIGN KEY(IDTR) REFERENCES TREASURE(ID));
+              CREATE TABLE TREASURECHARA(
+                IDTR      INTEGER,
+                CHARANAME VARCHAR(48),
+                PRIMARY KEY(IDTR, CHARANAME));
 
-                                  CREATE TABLE SUPERRACE(
-                                    NAME VARCHAR(48) PRIMARY KEY);
+              CREATE TABLE TREASUREVALUE(
+                ID      INTEGER PRIMARY KEY AUTOINCREMENT,
+                IDTR    INTEGER,
+                OBJNAME VARCHAR(48),
+                VALUE   INTEGER,
+                FOREIGN KEY(IDTR) REFERENCES TREASURE(ID));
 
-                                  CREATE TABLE RACE(
-                                    NAME VARCHAR(48) PRIMARY KEY,
-                                    SUPERNAME VARCHAR(48),
-                                    FOREIGN KEY(NAME) REFERENCES SUPERRACE(NAME));
+              CREATE TABLE SUPERRACE(
+                NAME VARCHAR(48) PRIMARY KEY);
 
-                                  CREATE TABLE CLASS(
-                                    NAME VARCHAR(48) PRIMARY KEY);
+              CREATE TABLE RACE(
+                NAME VARCHAR(48) PRIMARY KEY,
+                SUPERNAME VARCHAR(48),
+                FOREIGN KEY(SUPERNAME) REFERENCES SUPERRACE(NAME));
 
-                                  CREATE TABLE CHARACTER(
-                                    NAME VARCHAR(48) PRIMARY KEY,
-                                    RACE VARCHAR(48),
-                                    STORY TEXT,
-                                    TYPE INTEGER,
-                                    STR  INTEGER,
-                                    CON  INTEGER,
-                                    DEX  INTEGER,
-                                    INT  INTEGER,
-                                    WIS  INTEGER,
-                                    CHA  INTEGER,
-                                    FOREIGN KEY(RACE) REFERENCES RACE(NAME));
+              CREATE TABLE CLASS(
+                NAME VARCHAR(48) PRIMARY KEY);
 
-                                  CREATE TABLE CHARACLASS(
-                                    CHARANAME VARCHAR(48),
-                                    CLASSNAME VARCHAR(48),
-                                    LEVEL     INTEGER,
-                                    PRIMARY KEY(CHARANAME, CLASSNAME),
-                                    FOREIGN KEY(CHARANAME) REFERENCES CHARACTER(NAME),
-                                    FOREIGN KEY(CLASSNAME) REFERENCES CLASS(NAME));
+              CREATE TABLE CHARACTER(
+                NAME VARCHAR(48) PRIMARY KEY,
+                PLAYERNAME VARCHAR(48),
+                SEXE VARCHAR(48),
+                ALIGNMENT VARCHAR(48),
+                RACE VARCHAR(48),
+                STORY TEXT,
+                ICON  TEXT,
+                TYPE INTEGER,
+                STR  INTEGER,
+                CON  INTEGER,
+                DEX  INTEGER,
+                INT  INTEGER,
+                WIS  INTEGER,
+                CHA  INTEGER,
+                FOREIGN KEY(RACE) REFERENCES RACE(NAME),
+                FOREIGN KEY(ICON) REFERENCES RESOURCES(KEY));
 
-                                  CREATE TABLE GROUPEVENT(
-                                    ID          INTEGER PRIMARY KEY AUTOINCREMENT,
-                                    DESCRIPTION TEXT);
+              CREATE TABLE CHARACLASS(
+                CHARANAME VARCHAR(48),
+                CLASSNAME VARCHAR(48),
+                LEVEL     INTEGER,
+                PRIMARY KEY(CHARANAME, CLASSNAME),
+                FOREIGN KEY(CHARANAME) REFERENCES CHARACTER(NAME),
+                FOREIGN KEY(CLASSNAME) REFERENCES CLASS(NAME));
 
-                                  CREATE TABLE GROUPBINDING(
-                                    GROUPID INTEGER,
-                                    NAME    VARCHAR(48),
-                                    PRIMARY KEY(GROUPID, NAME),
-                                    FOREIGN KEY(GROUPID) REFERENCES GROUPEVENT(ID),
-                                    FOREIGN KEY(NAME)  REFERENCES CHARACTER(NAME));";
+              CREATE TABLE GROUPEVENT(
+                ID          INTEGER PRIMARY KEY AUTOINCREMENT,
+                DESCRIPTION TEXT);
 
+              CREATE TABLE GROUPBINDING(
+                GROUPID INTEGER,
+                NAME    VARCHAR(48),
+                PRIMARY KEY(GROUPID, NAME),
+                FOREIGN KEY(GROUPID) REFERENCES GROUPEVENT(ID),
+                FOREIGN KEY(NAME)  REFERENCES CHARACTER(NAME));";
+#endregion
+
+        /// <summary>
+        /// The SQLite connection
+        /// </summary>
         protected SQLiteConnection  m_dbConnection = null;
+
+        /// <summary>
+        /// The Object permitting to use commands regarding the SQLite database
+        /// </summary>
         protected SQLiteCommand     m_dbCommand    = null;
+
+        /// <summary>
+        /// The Database Context : matches between the Database and our application (through LINQ)
+        /// </summary>
         protected DandDContext      m_dbContext;
 
+        /// <summary>
+        /// The Constructor. Initialize the SQLite connection determined by a path file
+        /// </summary>
+        /// <param name="path">The SQLite string initializer. Can be a path via 'Data Source=path'.</param>
         public DBHandler(String path)
         {
             m_dbConnection          = new SQLiteConnection(path);
@@ -296,19 +503,33 @@ namespace DandDAdventures
             m_dbContext = new DandDContext(m_dbConnection);
         }
 
+        /// <summary>
+        /// Destructor. Does nothing in its current state
+        /// </summary>
         ~DBHandler()
         {
         }
 
+        /// <summary>
+        /// Commit the database
+        /// </summary>
         public void Commit()
         {
             m_dbContext.SaveChanges();
         }
 
+        /// <summary>
+        /// Rollback to the last commit state
+        /// </summary>
         public void Rollback()
         {
         }
 
+        /// <summary>
+        /// Backup this database to a file path
+        /// </summary>
+        /// <param name="path">The file path (see Data Source = in SQLite)</param>
+        /// <returns></returns>
         public SQLiteConnection Backup(String path)
         {
             SQLiteConnection dest = new SQLiteConnection(String.Format("Data Source = {0}", path));
@@ -323,7 +544,26 @@ namespace DandDAdventures
         ////////////////Queries///////////////
         //////////////////////////////////////
 #region
-        //Setters
+        //////////////////////
+        ////////Setters///////
+        //////////////////////
+
+        /// <summary>
+        /// Add a new Resources into the database. See Resource class
+        /// </summary>
+        /// <param name="key">The key of the resource</param>
+        /// <returns>true on success, false on failure. TODO In its current state, the application returns only true</returns>
+        public bool AddResource(String key)
+        {
+            m_dbContext.Resource.Add(new Resource { Key = key });
+            return true;
+        }
+
+        /// <summary>
+        /// Add a new class in the database
+        /// </summary>
+        /// <param name="c">The class name to add</param>
+        /// <returns>True on success, false on failure. TODO: returns currently only true</returns>
         public bool AddClass(String c)
         {
             Class cc = new Class()
@@ -336,14 +576,33 @@ namespace DandDAdventures
             return true;
         }
 
+        /// <summary>
+        /// Set a character internal data
+        /// The name cannot currently be changed
+        /// </summary>
+        /// <param name="chara">The character information to set in the database. 
+        /// The Function look at chara.Name to determine which Character has to be changed in the database</param>
         public void SetChara(Character chara)
         {
             foreach (var c in m_dbContext.Character.Where(d => d.Name == chara.Name).ToList())
             {
+                c.Icon  = chara.Icon;
+                c.Str   = chara.Str;
+                c.Con   = chara.Con;
+                c.Dex   = chara.Dex;
+                c.Int   = chara.Int;
+                c.Wis   = chara.Wis;
+                c.Cha   = chara.Cha;
                 c.Story = chara.Story;
             }
         }
 
+        /// <summary>
+        /// Add a new Race into the database
+        /// </summary>
+        /// <param name="sr">The superrace name</param>
+        /// <param name="r">The race name</param>
+        /// <returns></returns>
         public bool AddRace(String sr, String r)
         {
             Race race = new Race()

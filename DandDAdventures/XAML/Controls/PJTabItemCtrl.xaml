@@ -27,7 +27,12 @@
                         <TextBlock Text="[" Foreground="Green"/>
                         <TextBlock Text="{Binding Race}" Foreground="Green" />
                         <TextBlock Text="] " Foreground="Green"/>
+                        
                         <TextBlock Text="{Binding Name}" />
+                        
+                        <TextBlock Text=" (" Foreground="Red"/>
+                        <TextBlock Text="{Binding PlayerName}" Foreground="Red" />
+                        <TextBlock Text=") " Foreground="Red"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.Resources>

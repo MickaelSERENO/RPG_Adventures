@@ -9,6 +9,9 @@
         Title="Ajouter PJ/PNJ" Height="500" Width="600"
         x:Name="Window">
     <Grid>
+        <Grid.Resources>
+            <local:StringToImageConverter x:Key="StringToImageConverter"/>
+        </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="2*"/>
@@ -22,7 +25,7 @@
         <!-- The icon of the character -->
         <DockPanel Grid.Column="0" Grid.Row="0">
             <Button Click="ChangeCharacterIcon">
-                <Image Source="{Binding IconPath}" Stretch="Fill" x:Name="CaraImageIcon"/>
+                <Image Source="{Binding IconPath, Converter={StaticResource StringToImageConverter}}" Stretch="Fill" x:Name="CaraImageIcon"/>
             </Button>
         </DockPanel>
         
@@ -31,7 +34,7 @@
             <DockPanel DockPanel.Dock ="Top" Width="Auto">
                 <DockPanel.Resources>
                     <sys:String x:Key="Name">Nom Personnage</sys:String>
-                    <sys:String x:Key="NamePlayer">Nom du Joueur</sys:String>
+                    <sys:String x:Key="PlayerName">Nom du Joueur</sys:String>
                     <sys:String x:Key="Gender">Sexe</sys:String>
                     <sys:String x:Key="Alignment">Alignement</sys:String>
                     <sys:String x:Key="Classe">Classe</sys:String>
@@ -197,8 +200,8 @@
                         <TextBlock Grid.Column="0" Grid.Row="0" Text="" Margin="0,0,0,5"/>
                         <TextBlock Grid.Column="0" Grid.Row="1" Text="{StaticResource Name}" VerticalAlignment="Top"/>
                         <TextBox   Grid.Column="1" Grid.Row="1" Name="NameEntry"/>
-                        <TextBlock Grid.Column="0" Grid.Row="2" Text="{StaticResource NamePlayer}" VerticalAlignment="Top"/>
-                        <TextBox   Grid.Column="1" Grid.Row="2" Name="NamePlayerEntry"/>
+                        <TextBlock Grid.Column="0" Grid.Row="2" Text="{StaticResource PlayerName}" VerticalAlignment="Top"/>
+                        <TextBox   Grid.Column="1" Grid.Row="2" Name="PlayerNameEntry"/>
                         <TextBlock Grid.Column="0" Grid.Row="3" Text="{StaticResource Gender}" VerticalAlignment="Top"/>
                         <TextBox   Grid.Column="1" Grid.Row="3" Name="GenderEntry"/>
                         <TextBlock Grid.Column="0" Grid.Row="4" Text="{StaticResource Alignment}" VerticalAlignment="Top"/>

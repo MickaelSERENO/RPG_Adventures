@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,7 +38,15 @@ namespace DandDAdventures.XAML.Listeners
 
             //Commit the Dialog
             if(w.Datas.CharacterAdded)
+            {
                 m_wd.CommitDB.AddPJ(w.Datas.NewCharacters.ToArray());
+
+                //Add the icon as a new resources.
+                //TODO only one icon currently is added...
+                if(w.Datas.IconDefined)
+                    using(FileStream fs = new FileStream(w.Datas.IconPath, FileMode.Open))
+                        m_wd.AddResource(fs, w.Datas.NewCharacters[0].Icon);
+            }
         }
     }
 

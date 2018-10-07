@@ -10,6 +10,9 @@ using System.Data.SQLite;
 using System.Collections.Generic;
 using System.Windows.Input;
 using System.Linq;
+using System.IO.Compression;
+using DandDAdventures.Database;
+using System.Windows.Media.Imaging;
 
 namespace DandDAdventures.XAML
 {
@@ -18,13 +21,34 @@ namespace DandDAdventures.XAML
     /// </summary>
     public partial class MainWindow : Window, ICommitDatabase, ISelectedTree, ILinkName
     {
+        /// <summary>
+        /// The Window Data associated with this Window
+        /// </summary>
         protected WindowData     m_windowData;
+
+        /// <summary>
+        /// The Main Panel (center part of the UI).
+        /// </summary>
         protected Grid           m_mainPanel;
 
-        //ContentControls 
+        /// <summary>
+        /// The Content of the center part of the UI
+        /// </summary>
         protected ContentControl m_mainControl;
+
+        /// <summary>
+        /// The Content of the PJ Tab Control (right part of the UI)
+        /// </summary>
         protected ContentControl m_pjTabControl;
+
+        /// <summary>
+        /// The Content of the PNJ Tab Control (
+        /// </summary>
         protected ContentControl m_pnjTabControl;
+
+        /// <summary>
+        /// The Content of the Place Tab Control
+        /// </summary>
         protected ContentControl m_placeTabControl;
 
         //The Main Views
@@ -39,6 +63,9 @@ namespace DandDAdventures.XAML
         protected AddPJListener    m_addPJListener;
         protected AddPlaceListener m_addPlaceListener;
 
+        /// <summary>
+        /// Constructor. Initialize the Main Window
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -76,7 +103,21 @@ namespace DandDAdventures.XAML
             SetToPJMainView();
         }
 
-        //Set the Main View
+        /// <summary>
+        /// Function called by WPF when this Window is about to close.
+        /// Delete the temporary directory
+        /// </summary>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            //Delete the temporary directory
+            if(m_windowData.TempDir != null)
+                Directory.Delete(m_windowData.TempDir, true);
+            base.OnClosing(e);
+        }
+
+        /// <summary>
+        /// Set the main view to the PJ Tab View
+        /// </summary>
         private void SetToPJMainView()
         {
             m_mainControl.Content = m_pjView;
@@ -84,6 +125,9 @@ namespace DandDAdventures.XAML
             tabCtrl.SelectedIndex = ((TabItem)(m_pjTabControl.Parent)).TabIndex;
         }
 
+        /// <summary>
+        /// Set the main view to the Place Tab View
+        /// </summary>
         private void SetToPlaceMainView()
         {
             m_mainControl.Content = m_placeView;
@@ -91,7 +135,11 @@ namespace DandDAdventures.XAML
             tabCtrl.SelectedIndex = ((TabItem)(m_placeTabControl.Parent)).TabIndex;
         }
 
-        //Simple menu commands
+        /// <summary>
+        /// Function called when the "New" Button is pressed. Initialize a new database
+        /// </summary>
+        /// <param name="sender">The object calling this function</param>
+        /// <param name="e">The RoutedEventArgs associated</param>
         private void NewFile(object sender, RoutedEventArgs e)
         {
             m_windowData.Clean();
@@ -106,6 +154,11 @@ namespace DandDAdventures.XAML
             m_mainPanel.Visibility   = Visibility.Visible;
         }
 
+        /// <summary>
+        /// Function called by the Open Button. Open a file and load the application
+        /// </summary>
+        /// <param name="sender">The object calling this function.</param>
+        /// <param name="e">The RoutedEventArgs associated</param>
         private void OpenFile(object sender, RoutedEventArgs e)
         {
             m_windowData.Clean();
@@ -113,18 +166,40 @@ namespace DandDAdventures.XAML
             OpenFileDialog openFile = new OpenFileDialog();
             if (openFile.ShowDialog() == true)
             {
+                //Unzip the database (.db) file
+                String tempDir = $"c:/Temp/DandDAdventures/{DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds}/";
+                String tempDB  = tempDir + "database.db";
+                Directory.CreateDirectory(tempDir);
+                using(FileStream fs = new FileStream(openFile.FileName, FileMode.Open))
+                {
+                    using(ZipArchive zip = new ZipArchive(fs))
+                    {
+                        ZipArchiveEntry dbEntry = zip.GetEntry("database.db");
+                        using(Stream dbStream = dbEntry.Open())
+                        {
+                            using(FileStream fileStream = File.Create(tempDB))
+                            {
+                                dbStream.CopyTo(fileStream);
+                            }
+                        }
+                    }
+                }
+
                 //Open and load the Database
-                if (m_windowData.SQLDatabase == null)
-                    m_windowData.SQLDatabase = new DBHandler(String.Format("DataSource = {0}", openFile.FileName.Replace('\\', '/')));
+                if(m_windowData.SQLDatabase == null)
+                    m_windowData.SQLDatabase = new DBHandler(String.Format("DataSource = {0}", tempDB));
                 else
                 {
-                    var sql = new SQLiteConnection(String.Format("DataSource = {0}", openFile.FileName.Replace('\\', '/')));
+                    var sql = new SQLiteConnection(String.Format("DataSource = {0}", tempDB));
                     sql.Open();
                     m_windowData.SQLDatabase.ChangeSQLiteConnection(sql);
                 }
 
                 //Change to the memory
                 m_windowData.SQLDatabase.ChangeSQLiteConnection(m_windowData.SQLDatabase.Backup(":memory:"));
+
+                //Delete the temporary database
+                File.Delete(tempDB);
 
                 //Load the content in the FrontEnd
                 m_pjTabItem.LoadContent(m_windowData);
@@ -139,6 +214,11 @@ namespace DandDAdventures.XAML
             }
         }
 
+        /// <summary>
+        /// Function called when the Save Button is pressed. Save the data into a ZIP file
+        /// </summary>
+        /// <param name="sender">The object calling this function</param>
+        /// <param name="e">The RoutedEventArgs associated</param>
         private void SaveFile(object sender, RoutedEventArgs e)
         {
             if (m_windowData.SQLPath == null)
@@ -150,12 +230,49 @@ namespace DandDAdventures.XAML
 
             if(m_windowData.SQLPath != null)
             {
-                //Delete the file if needed
-                if (File.Exists(m_windowData.SQLPath))
-                    File.Delete(m_windowData.SQLPath);
-
                 m_windowData.SQLDatabase.Commit();
-                m_windowData.SQLDatabase.Backup(m_windowData.SQLPath).Close();
+                m_windowData.SQLDatabase.Backup(m_windowData.TempDir + "database.db").Close();
+
+                using(FileStream fs = new FileStream(m_windowData.SQLPath, FileMode.OpenOrCreate))
+                {
+                    //Modify the ZIP file
+                    using(ZipArchive zip = new ZipArchive(fs, ZipArchiveMode.Update))
+                    {
+                        ////////////////////////////////
+                        //Update the database file entry
+                        ////////////////////////////////
+                    
+                        //Delete the entry if it exists
+                        ZipArchiveEntry entry = zip.GetEntry("database.db");
+                        if(entry != null)
+                            entry.Delete();
+                        entry = zip.CreateEntry("database.db");
+
+                        //Set the entry data
+                        using(Stream str = entry.Open())
+                        {
+                            FileStream dbFS = new FileStream(m_windowData.TempDir + "database.db", FileMode.Open);
+                            dbFS.CopyTo(str);
+                        }
+
+                        //Update the new resources file entry
+                        //Actually a new resources can be a modification of another resource (like changing a character icon)
+                        foreach(DBResource r in m_windowData.NewResources.Values)
+                        {
+                            //Delete the entry if it exists
+                            entry = zip.GetEntry(r.Key);
+                            if(entry != null)
+                                entry.Delete();
+                            entry = zip.CreateEntry(r.Key);
+
+                            //Set the entry data
+                            using(Stream entryStr = entry.Open())
+                            {
+                                entryStr.Write(r.Data, 0, (int)r.Length);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -169,14 +286,22 @@ namespace DandDAdventures.XAML
 
         }
 
-        //Interfaces implementations
-        //Implementation of ICommitDatabase
+        /// <summary>
+        /// Add characters into the application memory
+        /// </summary>
+        /// <param name="charas"></param>
         public void AddPJ(Character[] charas)
         {
             foreach(var chara in charas)
+            {
                 m_windowData.PJDatas.CharacterList.Add(chara);
+            }
         }
 
+        /// <summary>
+        /// Add a place into the application memory
+        /// </summary>
+        /// <param name="p"The place name></param>
         public void AddPlace(Place p)
         {
             m_windowData.PlaceDatas.PlaceList.Add(p);
@@ -186,10 +311,23 @@ namespace DandDAdventures.XAML
         {
             if(chara.Length == 1)
             {
+                m_windowData.CurrentPJ = chara[0].Name;
+
                 m_pjView.SetSummary(chara[0].Story);
                 m_pjView.SetGroupEvent(chara[0].Name);
 
-                m_windowData.CurrentPJ = chara[0].Name;
+                if(chara[0].Icon != null)
+                {
+                    DBResource res = m_windowData.GetResource(chara[0].Icon);
+                    if(res != null)
+                    {
+                        BitmapImage img = new BitmapImage();
+                        img.BeginInit();
+                        img.StreamSource = new MemoryStream(res.Data);
+                        img.EndInit();
+                        m_pjView.SetCharacterIcon(img);
+                    }
+                }
             }
         }
 
@@ -289,6 +427,11 @@ namespace DandDAdventures.XAML
         //////////////////////////
 #region
         /// <summary>
+        /// The temporary directory in use
+        /// </summary>
+        protected String m_tempDir = null;
+
+        /// <summary>
         /// Can we save the application ?
         /// </summary>
         protected bool   m_canSave   = false;
@@ -307,13 +450,44 @@ namespace DandDAdventures.XAML
         /// The database handler
         /// </summary>
         protected DBHandler       m_dbHandler;
+
+        /// <summary>
+        /// The interface permitting to commit into the database. Point to MainWindow object
+        /// </summary>
         protected ICommitDatabase m_commitDB;
+
+        /// <summary>
+        /// The interface permitting to link a name to another part of the UI (shortcuts). Point to MainWindow object
+        /// For example, clicking on "Westcott Yulis" can point you to the character shit of Westcott Yulis
+        /// </summary>
         protected ILinkName       m_linkName;
+
+        /// <summary>
+        /// Interface permitting to update the UI when selecting part of the UI (places, characters, dates, etc.)
+        /// Points to MainWindow object
+        /// </summary>
         protected ISelectedTree   m_selectedTree;
 
-        //DataContexts
+        /// <summary>
+        /// The DataContext of the PJView.xaml
+        /// </summary>
         protected PJDataContext    m_pjDatas;
+
+        /// <summary>
+        /// The DataContext of the PlaceView.xaml
+        /// </summary>
         protected PlaceDataContext m_placeDatas;
+
+        /// <summary>
+        /// The new resources to add into the next data ZIP 
+        /// Can also be used directly by the application
+        /// </summary>
+        protected Dictionary<String, DBResource> m_newResources;
+
+        /// <summary>
+        /// Dictionary containing already loaded resources
+        /// </summary>
+        protected Dictionary<String, DBResource> m_loadedResources;
 
 #endregion
 
@@ -331,16 +505,18 @@ namespace DandDAdventures.XAML
         /// </summary>
         /// <param name="sqlDatas">The database handler</param>
         /// <param name="commitDB">The interface permitting to modify the database</param>
-        /// <param name="linkName"></param>
+        /// <param name="linkName">The interface permitting to add link into a text based on already known name (character names, place names, etc.)</param>
         /// <param name="selectedTree"></param>
         public WindowData(DBHandler sqlDatas, ICommitDatabase commitDB, ILinkName linkName, ISelectedTree selectedTree)
         {
-            m_dbHandler    = sqlDatas;
-            m_commitDB     = commitDB;
-            m_linkName     = linkName;
-            m_selectedTree = selectedTree;
-            m_pjDatas    = new PJDataContext(this);
-            m_placeDatas = new PlaceDataContext(this);
+            m_dbHandler       = sqlDatas;
+            m_commitDB        = commitDB;
+            m_linkName        = linkName;
+            m_selectedTree    = selectedTree;
+            m_newResources    = new Dictionary<String, DBResource>();
+            m_loadedResources = new Dictionary<String, DBResource>();
+            m_pjDatas         = new PJDataContext(this);
+            m_placeDatas      = new PlaceDataContext(this);
         }
 
         /// <summary>
@@ -357,6 +533,54 @@ namespace DandDAdventures.XAML
         }
 
         /// <summary>
+        /// Add a new resource for save purpose
+        /// </summary>
+        /// <param name="input">The input data</param>
+        /// <param name="length">The input length</param>
+        /// <param name="key">The key associated with this resource</param>
+        public void AddResource(byte[] input, long length, String key)
+        {
+            m_newResources.Add(key, new DBResource(input, length, key));
+        }
+        /// <summary>
+        /// Add a new resource for save purpose
+        /// </summary>
+        /// <param name="s">The Stream data</param>
+        /// <param name="key">The key associated with this resource</param>
+        public void AddResource(Stream s, String key)
+        {
+            DBResource res = new DBResource(s, key);
+            m_newResources.Add(key, res);
+            m_loadedResources.Add(key, res);
+        }
+
+        /// <summary>
+        /// Get a Resource base on the key of the resources (ZIP key). 
+        /// If the resource is already loaded, we do not read again the ZIP file
+        /// </summary>
+        /// <param name="key">The key to look at</param>
+        /// <returns>The DBResource corresponding to this key if found. Null otherwise</returns>
+        public DBResource GetResource(String key)
+        {
+            if(m_loadedResources.ContainsKey(key))
+                return m_loadedResources[key];
+
+            using(FileStream fs = new FileStream(SQLPath, FileMode.Open))
+            {
+                //Modify the ZIP file
+                using(ZipArchive zip = new ZipArchive(fs, ZipArchiveMode.Update))
+                {
+                    ZipArchiveEntry entry = zip.GetEntry(key);
+                    if(entry == null)
+                        return null;
+                    return new DBResource(entry.Open(), key);
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Specify that a property has changed
         /// </summary>
         /// <param name="name">The name of the property</param>
@@ -370,11 +594,37 @@ namespace DandDAdventures.XAML
         /////PUBLIC PROPERTIES/////
         ///////////////////////////
 #region
+        /// <summary>
+        /// Property of the Temporary directory
+        /// </summary>
+        public String          TempDir      { get => m_tempDir;   set => m_tempDir   = value; }
+
+        /// <summary>
+        /// The SQL Database in use
+        /// </summary>
         public DBHandler       SQLDatabase  { get => m_dbHandler; set => m_dbHandler = value; }
-        public ICommitDatabase CommitDB     { get => m_commitDB; }
-        public ILinkName       LinkName     { get => m_linkName; }
+
+        /// <summary>
+        /// The interface permitting to commit into the database. Point to MainWindow object
+        /// </summary>
+        public ICommitDatabase CommitDB     { get => m_commitDB;     }
+
+        /// <summary>
+        /// The interface permitting to link a name to another part of the UI (shortcuts). Point to MainWindow object
+        /// For example, clicking on "Westcott Yulis" can point you to the character shit of Westcott Yulis
+        /// </summary>
+        public ILinkName       LinkName     { get => m_linkName;     }
+
+        /// <summary>
+        /// Interface permitting to update the UI when selecting part of the UI (places, characters, dates, etc.)
+        /// Points to MainWindow object
+        /// </summary>
         public ISelectedTree   SelectedTree { get => m_selectedTree; }
 
+        /// <summary>
+        /// Has the internal state of the data changed ? 
+        /// CanSave is here to tell that the application can save the data because the data that the application contains is different than at the beginning
+        /// </summary>
         public bool CanSave
         {
             get { return m_canSave; }
@@ -385,6 +635,9 @@ namespace DandDAdventures.XAML
             }
         }
 
+        /// <summary>
+        /// What is the current player selected ?
+        /// </summary>
         public String CurrentPJ
         {
             get => m_currentPJ;
@@ -395,10 +648,31 @@ namespace DandDAdventures.XAML
             }
         }
 
+        /// <summary>
+        /// The players data context
+        /// </summary>
         public PJDataContext    PJDatas    { get => m_pjDatas; }
+
+        /// <summary>
+        /// The place data context
+        /// </summary>
         public PlaceDataContext PlaceDatas { get => m_placeDatas; }
 
+        /// <summary>
+        /// The actual path of the database (ZIP file)
+        /// Before it was a SQL path, hence the name
+        /// </summary>
         public String SQLPath { get => m_sqlPath; set => m_sqlPath = value; }
+
+        /// <summary>
+        /// The New Resources to add at the next save command
+        /// </summary>
+        public Dictionary<String, DBResource> NewResources { get => m_newResources; }
+
+        /// <summary>
+        /// The Loaded resources
+        /// </summary>
+        public Dictionary<String, DBResource> LoadedResources { get => m_loadedResources; }
 #endregion
     }
 }

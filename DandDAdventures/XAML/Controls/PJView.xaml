@@ -7,7 +7,7 @@
              xmlns:db="clr-namespace:DandDAdventures"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding PJDatas}">
+             d:DesignHeight="500" d:DesignWidth="500" DataContext="{Binding PJDatas}">
     <UserControl.Resources>
         <Style TargetType="Run" x:Key="LinkStyle">
             <Setter Property="Foreground" Value="Blue"/>
@@ -21,56 +21,59 @@
             <sys:String x:Key="Diary">Journal</sys:String>
         </Grid.Resources>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" MinWidth="200" MaxWidth="400"/>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="1"/>
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
+        <Image Grid.Row="0" Grid.Column="0" Source="{Binding CharacterIcon}" Stretch="Uniform"/>
+        <GridSplitter Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Stretch" ></GridSplitter>
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="{StaticResource Summary}" DockPanel.Dock="Top" Margin="0,0,0,10"/>
-            <ScrollViewer Grid.Row="1" >
+            <ScrollViewer Grid.Row="1">
                 <TextBlock Name="SummaryVal" TextWrapping="Wrap" Height="Auto"
                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                            ScrollViewer.VerticalScrollBarVisibility="Auto"/>
             </ScrollViewer>
-
         </Grid>
 
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>
-            <ListView Grid.Column="0" ItemsSource="{Binding Path=EventList, UpdateSourceTrigger=PropertyChanged}" Name="ListEvents" SelectedItem="{Binding Path=CurrentDate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectionChanged="ListEventsSelectionChanged">
-                <ListView.Resources>
-                    <DataTemplate DataType="{x:Type local:PJGroupEvent}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="["/>
-                            <TextBlock Text="{Binding ID}"/>
-                            <TextBlock Text="] "/>
-                            <TextBlock Text="{Binding CharaList}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.Resources>
+        <GridSplitter Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" ></GridSplitter>
 
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <EventSetter Event="MouseDoubleClick" Handler="EventMouseDoubleClick"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
-            
-            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" ></GridSplitter>
-            <ScrollViewer Grid.Column="2" >
+        <ListView Grid.Row="2" Grid.Column="0" ItemsSource="{Binding Path=EventList, UpdateSourceTrigger=PropertyChanged}" Name="ListEvents" SelectedItem="{Binding Path=CurrentDate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectionChanged="ListEventsSelectionChanged">
+            <ListView.Resources>
+                <DataTemplate DataType="{x:Type local:PJGroupEvent}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="["/>
+                        <TextBlock Text="{Binding ID}"/>
+                        <TextBlock Text="] "/>
+                        <TextBlock Text="{Binding CharaList}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.Resources>
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <EventSetter Event="MouseDoubleClick" Handler="EventMouseDoubleClick"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <Grid Grid.Row="2" Grid.Column="2">
+            <ScrollViewer>
                 <TextBlock TextWrapping="Wrap" Name="EventDesc" Height="Auto" Width="Auto"></TextBlock>
             </ScrollViewer>
-
         </Grid>
     </Grid>
 </UserControl>

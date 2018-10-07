@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -78,9 +80,24 @@ namespace DandDAdventures.XAML
         protected WindowData m_wd;
 
         /// <summary>
-        /// The character name entered in the field box
+        /// The character name field box
         /// </summary>
         protected TextBox    m_nameEntry;
+
+        /// <summary>
+        /// The player name field box
+        /// </summary>
+        protected TextBox    m_playerNameEntry;
+
+        /// <summary>
+        /// The character's gender
+        /// </summary>
+        protected TextBox    m_charaGender;
+
+        /// <summary>
+        /// The character's alignment
+        /// </summary>
+        protected TextBox    m_charaAlignment;
 
         /// <summary>
         /// The ComboxBox containing all the known class (Database)
@@ -115,7 +132,7 @@ namespace DandDAdventures.XAML
         /// <summary>
         /// The character image icon
         /// </summary>
-        protected Image m_characterImage;
+        protected System.Windows.Controls.Image m_characterImage;
 #endregion
 
         /// <summary>
@@ -132,12 +149,15 @@ namespace DandDAdventures.XAML
             m_wd = wd;
 
             //Get every Widgets
-            m_nameEntry     = (TextBox)FindName("NameEntry");
-            m_raceCB        = (ComboBox)FindName("RaceCB");
-            m_raceTV        = (TreeView)FindName("RaceTV");
-            m_storyEntry    = (TextBox)FindName("StoryEntry");
-            m_classGrid     = (DataGrid)FindName("CharaDataGrid");
-            m_characterImage = (Image)FindName("CaraImageIcon");
+            m_nameEntry       = (TextBox)FindName("NameEntry");
+            m_playerNameEntry = (TextBox)FindName("PlayerNameEntry");
+            m_charaGender     = (TextBox)FindName("GenderEntry");
+            m_charaAlignment  = (TextBox)FindName("AlignmentEntry");
+            m_raceCB          = (ComboBox)FindName("RaceCB");
+            m_raceTV          = (TreeView)FindName("RaceTV");
+            m_storyEntry      = (TextBox)FindName("StoryEntry");
+            m_classGrid       = (DataGrid)FindName("CharaDataGrid");
+            m_characterImage  = (System.Windows.Controls.Image)FindName("CaraImageIcon");
 
             //Prompt the database
             var superRaceVal = wd?.SQLDatabase.GetSuperRaces();
@@ -228,15 +248,26 @@ namespace DandDAdventures.XAML
             if (newRace && raceSplitted.Length > 1)
                 m_wd.SQLDatabase.AddRace(raceSplitted[0], raceSplitted[1]);
 
+            String iconResKey = null;
+            if(m_pjWindowData.IconDefined)
+            {
+                iconResKey = m_nameEntry.Text + "_Icon";
+                m_wd.SQLDatabase.AddResource(iconResKey);
+            }
+
             //Add the Character into the database
-            m_pjWindowData.AddPJ(new Character { Name = m_nameEntry.Text, Race = m_raceCB.Text.Split(new Char[] { '/' }).Last(), Story = StoryEntry.Text,
-                Str  = m_pjWindowData.Caracteristics.Strength,     Con  = m_pjWindowData.Caracteristics.Constitution, Dex  = m_pjWindowData.Caracteristics.Dexterity,
-                Int  = m_pjWindowData.Caracteristics.Intelligence, Wis  = m_pjWindowData.Caracteristics.Wisdom      , Cha  = m_pjWindowData.Caracteristics.Charisma
+            m_pjWindowData.AddPJ(new Character { Name = m_nameEntry.Text, PlayerName = m_playerNameEntry.Text, Sexe = m_charaGender.Text, 
+                                                 Race = m_raceCB.Text.Split(new Char[] { '/' }).Last(), Alignment = m_charaAlignment.Text,
+                                                 Story = StoryEntry.Text, Type = 0, Icon = iconResKey,
+                                                 Str  = m_pjWindowData.Caracteristics.Strength,     Con  = m_pjWindowData.Caracteristics.Constitution, Dex  = m_pjWindowData.Caracteristics.Dexterity,
+                                                 Int  = m_pjWindowData.Caracteristics.Intelligence, Wis  = m_pjWindowData.Caracteristics.Wisdom      , Cha  = m_pjWindowData.Caracteristics.Charisma
             });
 
             //Then Add the Character Classes (a.k.a association between a character and ALL its classes)
             m_pjWindowData.AddCharaRowsToDb(m_nameEntry.Text);
+            m_characterImage.Source=null;
 
+            //Close the window
             Close();
         }
 
@@ -389,11 +420,11 @@ namespace DandDAdventures.XAML
         /// <param name="e">The RoutedEventArgs associated with this action</param>
         private void ChangeCharacterIcon(object sender, RoutedEventArgs e)
         {
-            String path = null;
-            if(!Utils.OpenFileDialog("Sélectionner l'icon du personnage courant", out path))
-                return;
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.Title = "Sélectionner l'icon du personnage courant";
+            if(openFile.ShowDialog() == true)
+                Datas.IconPath = openFile.FileName;
 
-            Datas.IconPath = path;
             m_characterImage.Stretch = Stretch.Uniform;
         }
 #endregion
@@ -402,7 +433,6 @@ namespace DandDAdventures.XAML
         /// The Internal data associated with this Window accessible via the XAML
         /// </summary>
         public PJDataWindow Datas { get => m_pjWindowData; }
-
     }
 
     /// <summary>
@@ -491,6 +521,15 @@ namespace DandDAdventures.XAML
 #region
 
         /// <summary>
+        /// Get the Default Icon path used in the application
+        /// </summary>
+        /// <returns></returns>
+        public String GetDefaultIconPath()
+        {
+            return System.AppDomain.CurrentDomain.BaseDirectory+"/Resources/DefaultCaracterIcon.png";
+        }
+
+        /// <summary>
         /// Add a PJ into the Database.
         /// </summary>
         /// <param name="chara">The character to add</param>
@@ -572,6 +611,11 @@ namespace DandDAdventures.XAML
         /// The ClassList available
         /// </summary>
         public List<String> ClassList          { get => m_classList;      set { m_classList      = value; OnPropertyChanged("ClassList"); } }
+
+        /// <summary>
+        /// Is the Icon defined ?
+        /// </summary>
+        public Boolean IconDefined             { get => m_iconDefined; }   
 
         /// <summary>
         /// The IconPath associated with the in construction character

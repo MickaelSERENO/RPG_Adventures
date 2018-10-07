@@ -16,18 +16,54 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace DandDAdventures.XAML.Controls
-{
+{  
     /// <summary>
-    /// Logique d'interaction pour PJView.xaml
+    /// GroupEvent class for characters. Represent an event applied to a set of characters
+    /// </summary>
+    public class PJGroupEvent
+    {
+        /// <summary>
+        /// ID of the Event displayed (application ID)
+        /// </summary>
+        public int ID { get; set; }
+
+        /// <summary>
+        /// The GroupEventID (Database ID)
+        /// </summary>
+        public int    GroupEventID { get; set; }
+
+        /// <summary>
+        /// Description of the Event
+        /// </summary>
+        public String Description  { get; set; }
+
+        /// <summary>
+        /// The Characters of this event (String form)
+        /// </summary>
+        public String CharaList    { get; set; }
+    }
+
+    /// <summary>
+    /// PJView.xaml Logique. Controls the Character view
     /// </summary>
     public partial class PJView : UserControl
     {
+        /// <summary>
+        /// The summary text field
+        /// </summary>
         private TextBlock m_summaryVal;
+
+        /// <summary>
+        /// The Main application data
+        /// </summary>
         private WindowData m_wd;
 
+        /// <summary>
+        /// Constructor. Initialize the PJView.
+        /// </summary>
+        /// <param name="wd">The application data</param>
         public PJView(WindowData wd)
         {
-
             m_wd = wd;
             InitializeComponent();
 
@@ -38,6 +74,10 @@ namespace DandDAdventures.XAML.Controls
         {
         }
 
+        /// <summary>
+        /// Add a groupevent in the character view
+        /// </summary>
+        /// <param name="ge">The groupevent to add</param>
         public void AddGroupEvent(GroupEvent ge)
         {
             m_wd.PJDatas.AddGroupEvent(ge);
@@ -52,11 +92,19 @@ namespace DandDAdventures.XAML.Controls
                 m_wd.PJDatas.AddGroupEvent(ge);
         }
 
-
+        /// <summary>
+        /// Set the summary displayed. The String will be altered in order to create links to others pages
+        /// </summary>
+        /// <param name="s">The summary string</param>
         public void SetSummary(String s)
         {
             String[] listName = m_wd.SQLDatabase.GetListName();
             Utils.SetTextLink(m_summaryVal, s, listName, (Style)FindResource("LinkStyle"), this.PlaceDown);
+        }
+
+        public void SetCharacterIcon(BitmapImage icon)
+        {
+            m_wd.PJDatas.CharacterIcon = icon;
         }
 
         private void PlaceDown(object sender, MouseButtonEventArgs e)
@@ -102,14 +150,6 @@ namespace DandDAdventures.XAML.Controls
         }
     }
 
-    public class PJGroupEvent
-    {
-        public int    ID { get; set; }
-        public int GroupEventID { get; set; }
-        public String Description { get; set; }
-        public String CharaList { get; set; }
-    }
-
     public class PJDataContext : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -118,11 +158,13 @@ namespace DandDAdventures.XAML.Controls
         protected Character m_characterSelected = null;
         protected PJGroupEvent m_currentDate = null;
 
-        private WindowData m_wd;
+        private WindowData  m_wd;
+        private BitmapImage m_characterIcon = null;
 
         public PJDataContext(WindowData wd)
         {
             m_wd = wd;
+            m_characterIcon  = StringToImageConverter.BitmapFromPath(System.AppDomain.CurrentDomain.BaseDirectory+"/Resources/DefaultCaracterIcon.png");
             m_groupEvent     = new ObservableCollection<PJGroupEvent>();
             m_listCharacters = new ObservableCollection<Character>();
         }
@@ -161,5 +203,7 @@ namespace DandDAdventures.XAML.Controls
                 OnPropertyChanged("CharacterSelected");
             }
         }
+
+        public BitmapImage CharacterIcon { get => m_characterIcon; set { m_characterIcon = value; OnPropertyChanged("CharacterIcon"); } }
     }
 }
