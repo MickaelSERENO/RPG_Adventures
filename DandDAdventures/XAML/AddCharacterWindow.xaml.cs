@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -600,7 +601,7 @@ namespace DandDAdventures.XAML
         /// <summary>
         /// The class rows for the in construction character
         /// </summary>
-        public List<ClassRow>  ClassRows       { get => m_classRow;       set { m_classRow = value; OnPropertyChanged("ClassRows"); } }
+        public List<ClassRow>  ClassRows      { get => m_classRow;       set { m_classRow = value; OnPropertyChanged("ClassRows"); } }
 
         /// <summary>
         /// The character's caracteristics
@@ -610,17 +611,22 @@ namespace DandDAdventures.XAML
         /// <summary>
         /// The ClassList available
         /// </summary>
-        public List<String> ClassList          { get => m_classList;      set { m_classList      = value; OnPropertyChanged("ClassList"); } }
+        public List<String>            ClassList      { get => m_classList;      set { m_classList      = value; OnPropertyChanged("ClassList"); } }
 
         /// <summary>
         /// Is the Icon defined ?
         /// </summary>
-        public Boolean IconDefined             { get => m_iconDefined; }   
+        public Boolean                 IconDefined    { get => m_iconDefined; }   
 
         /// <summary>
         /// The IconPath associated with the in construction character
         /// </summary>
-        public String IconPath                 { get => m_iconPath;       set { m_iconPath       = value; OnPropertyChanged("IconPath"); m_iconDefined = true; } }
+        public String                  IconPath       { get => m_iconPath;       set { m_iconPath       = value; OnPropertyChanged("IconPath"); m_iconDefined = true; } }
+
+        /// <summary>
+        /// The Places known by the application. Quick access to another List in the application
+        /// </summary>
+        public ObservableCollection<Place> Places     { get => m_wd.PlaceDatas.PlaceList; }
 #endregion
     }
 }

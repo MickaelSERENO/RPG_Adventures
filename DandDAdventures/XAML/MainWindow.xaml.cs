@@ -306,6 +306,20 @@ namespace DandDAdventures.XAML
         {
             m_windowData.PlaceDatas.PlaceList.Add(p);
         }
+
+        public BitmapImage GetBitmapImageFromKeyRes(String key)
+        {
+            DBResource res = m_windowData.GetResource(key);
+            if (res != null)
+            {
+                BitmapImage img = new BitmapImage();
+                img.BeginInit();
+                img.StreamSource = new MemoryStream(res.Data);
+                img.EndInit();
+                return img;
+            }
+            return null;
+        }
         
         public void OnSelectCharacter(Character[] chara)
         {
@@ -318,15 +332,8 @@ namespace DandDAdventures.XAML
 
                 if(chara[0].Icon != null)
                 {
-                    DBResource res = m_windowData.GetResource(chara[0].Icon);
-                    if(res != null)
-                    {
-                        BitmapImage img = new BitmapImage();
-                        img.BeginInit();
-                        img.StreamSource = new MemoryStream(res.Data);
-                        img.EndInit();
-                        m_CharacterView.SetCharacterIcon(img);
-                    }
+                    BitmapImage img = GetBitmapImageFromKeyRes(chara[0].Icon);
+                    if (img != null) { m_CharacterView.SetCharacterIcon(img); }
                 }
             }
         }
@@ -363,6 +370,9 @@ namespace DandDAdventures.XAML
                     m_windowData.PlaceDatas.TreasureList.Add(trItem);
                     i++;
                 }
+
+                BitmapImage img = GetBitmapImageFromKeyRes(place.Icon);
+                if (img != null) { m_windowData.PlaceDatas.PlaceIcon = img; } ;
             }
         }
 

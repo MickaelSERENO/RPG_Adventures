@@ -223,7 +223,8 @@
                         <TextBlock Grid.Column="0" Grid.Row="4" Text="{StaticResource Alignment}" VerticalAlignment="Top"/>
                         <TextBox   Grid.Column="1" Grid.Row="4" Name="AlignmentEntry"/>
                         <TextBlock Grid.Column="0" Grid.Row="5" Text="{StaticResource Place}" VerticalAlignment="Top"/>
-                        <TextBox   Grid.Column="1" Grid.Row="5" Name="PlaceEntry"/>
+                        <ComboBox  Grid.Column="1" Grid.Row="5" Name="PlaceEntry" ItemsSource="{Binding Places}" 
+                                   DisplayMemberPath="Name" SelectedValuePath="Name"/>
                     </Grid>
                 </DockPanel>
                 

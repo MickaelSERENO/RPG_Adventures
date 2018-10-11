@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace DandDAdventures.XAML.Controls
 {
@@ -106,6 +107,7 @@ namespace DandDAdventures.XAML.Controls
         protected    ObservableCollection<TreasureItem> m_treasureList;
         protected    TreasureItem                       m_treasureSelected = null;
         protected    Place                              m_placeSelected    = null;
+        protected    BitmapImage                        m_placeIcon        = null;
 
         public PlaceDataContext(WindowData wd)
         {
@@ -153,5 +155,10 @@ namespace DandDAdventures.XAML.Controls
                 OnPropertyChanged("PlaceSelected");
             }
         }
+
+        /// <summary>
+        /// The Current PlaceIcon displayed
+        /// </summary>
+        public BitmapImage PlaceIcon { get => m_placeIcon; set { m_placeIcon = value; OnPropertyChanged("PlaceIcon"); } }
     }
 }

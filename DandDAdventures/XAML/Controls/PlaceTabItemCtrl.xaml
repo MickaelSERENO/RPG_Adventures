@@ -16,21 +16,28 @@
         <Button DockPanel.Dock="Bottom" Width="Auto" Height="Auto" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="AddClick" Margin="0,0,-4,0">
             <TextBlock Text="{StaticResource Add}"/>
         </Button>
-        
-        <ListView ItemsSource="{Binding PlaceDatas.PlaceList}" Name="MainListView" 
-                  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SelectionMode="Single"
-                  SelectedItem="{Binding PlaceDatas.PlaceSelected, Mode=TwoWay}" SelectionChanged="MainListViewSelectionChanged">
-            <ListView.Resources>
-                <Style TargetType="{x:Type ListViewItem}">
-                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItemMouseDoubleClick"/>
-                </Style>
 
-                <DataTemplate DataType="{x:Type self:Place}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.Resources>
-        </ListView>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <ListView ItemsSource="{Binding PlaceDatas.PlaceList}" Name="MainListView" Grid.Row="0"
+                      VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SelectionMode="Single"
+                      SelectedItem="{Binding PlaceDatas.PlaceSelected, Mode=TwoWay}" SelectionChanged="MainListViewSelectionChanged">
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <EventSetter Event="MouseDoubleClick" Handler="ListViewItemMouseDoubleClick"/>
+                    </Style>
+
+                    <DataTemplate DataType="{x:Type self:Place}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.Resources>
+            </ListView>
+            <Image DataContext="{Binding PlaceDatas}" Source="{Binding PlaceIcon}" Grid.Row="1"/>
+        </Grid>
     </DockPanel>
 </UserControl>

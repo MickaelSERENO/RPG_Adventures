@@ -45,6 +45,16 @@ namespace DandDAdventures
         /// A description
         /// </summary>
         public String Story { get; set; }
+
+        /// <summary>
+        /// The Key of the Icon (Map)
+        /// </summary>
+        public String Icon { get; set; }
+
+        /// <summary>
+        /// The parent place
+        /// </summary>
+        public String ParentPlace { get; set; }
     }
 
     /// <summary>
@@ -392,7 +402,10 @@ namespace DandDAdventures
 
               CREATE TABLE PLACE(
                 NAME  VARCHAR(48) PRIMARY KEY,
-                STORY TEXT);
+                STORY TEXT,
+                ICON TEXT,
+                PARENTPLACE VARCHAR(48),
+                FOREIGN KEY(PARENTPLACE) REFERENCES PLACE(NAME));
 
               CREATE TABLE TREASURE(
                 ID        INTEGER PRIMARY KEY AUTOINCREMENT,

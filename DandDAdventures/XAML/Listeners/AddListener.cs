@@ -81,7 +81,17 @@ namespace DandDAdventures.XAML.Listeners
             AddPlaceDatas datas = w.DataContext as AddPlaceDatas;
             //Commit the Dialog
             if (datas.PlaceAdded)
-                m_wd.CommitDB.AddPlace(new Place{Name = datas.Name, Story = datas.PlaceStory});
+            {
+                String key = datas.PlaceIconKey;
+                m_wd.CommitDB.AddPlace(new Place { Name = datas.Name, Icon = key, Story = datas.PlaceStory });
+                if (datas.IconDefined)
+                {
+                    AddPlaceDatas data = (w.DataContext as AddPlaceDatas);
+                    if (data.IconDefined)
+                        using (FileStream fs = new FileStream(data.IconPath, FileMode.Open))
+                            m_wd.AddResource(fs, key);
+                }
+            }
         }
     }
 }
